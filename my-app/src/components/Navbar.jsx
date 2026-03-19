@@ -1,17 +1,20 @@
-import './Navbar.css';
+import "./Navbar.css";
+import { Link } from "react-router-dom";
 
 export default function Navbar() {
   return (
     <>
-      <nav class="navbar">
-        <div class="navbar-inner">
-          <div class="navbar-logo">
-            IT <span>Study</span> Hub
+      <nav className="navbar">
+        <div className="navbar-inner">
+          <div className="navbar-logo">
+            <Link to={"/"}>
+              IT <span>Study</span> Hub
+            </Link>
           </div>
-          <div class="navbar-links">
-            <a href="#">หน้าแรก</a>
-            <a href="#">ดูกลุ่มติวหนังสือ</a>
-            <div class="navbar-avatar">
+          <div className="navbar-links">
+            <Link to={"/"}>หน้าแรก</Link>
+            <Link to={"/study-group-list"}>ดูกลุ่มติวหนังสือ</Link>
+            <div className="navbar-avatar">
               <svg
                 width="18"
                 height="18"
