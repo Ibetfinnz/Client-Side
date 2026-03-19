@@ -49,7 +49,7 @@ function Register() {
           <input
             type="text"
             name="firstName"
-            placeholder="ชื่อ"
+            placeholder="Name"
             value={form.firstName}
             onChange={handleChange}
             required
@@ -60,7 +60,7 @@ function Register() {
           <input
             type="text"
             name="lastName"
-            placeholder="นามสกุล"
+            placeholder="Last Name"
             value={form.lastName}
             onChange={handleChange}
             required
@@ -71,7 +71,7 @@ function Register() {
           <input
             type="email"
             name="email"
-            placeholder="email"
+            placeholder="Email"
             value={form.email}
             onChange={handleChange}
             required
@@ -82,7 +82,7 @@ function Register() {
           <input
             type="password"
             name="password"
-            placeholder="password"
+            placeholder="Password"
             value={form.password}
             onChange={handleChange}
             required
