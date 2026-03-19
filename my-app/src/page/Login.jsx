@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import './Login.css';
+import Header from '../components/Header';
 
 function Login() {
   const [form, setForm] = useState({ email: '', password: '' });
@@ -36,36 +37,39 @@ function Login() {
   };
 
   return (
-    <div className="login-container">
-      <form className="login-form" onSubmit={handleSubmit}>
-        <div className="form-group">
-          <label>อีเมล</label>
-          <input
-            type="email"
-            name="email"
-            placeholder="Value"
-            value={form.email}
-            onChange={handleChange}
-            required
-          />
-        </div>
-        <div className="form-group">
-          <label>รหัสผ่าน</label>
-          <input
-            type="password"
-            name="password"
-            placeholder="Value"
-            value={form.password}
-            onChange={handleChange}
-            required
-          />
-        </div>
-        {message && <p className="form-message">{message}</p>}
-        <button type="submit" className="btn-primary" disabled={loading}>
-          {loading ? 'กำลังเข้าสู่ระบบ...' : 'เข้าสู่ระบบ'}
-        </button>
-      </form>
-    </div>
+    <>
+      <Header />
+      <div className="login-container">
+        <form className="login-form" onSubmit={handleSubmit}>
+          <div className="form-group">
+            <label>อีเมล</label>
+            <input
+              type="email"
+              name="email"
+              placeholder="Value"
+              value={form.email}
+              onChange={handleChange}
+              required
+            />
+          </div>
+          <div className="form-group">
+            <label>รหัสผ่าน</label>
+            <input
+              type="password"
+              name="password"
+              placeholder="Value"
+              value={form.password}
+              onChange={handleChange}
+              required
+            />
+          </div>
+          {message && <p className="form-message">{message}</p>}
+          <button type="submit" className="btn-primary" disabled={loading}>
+            {loading ? 'กำลังเข้าสู่ระบบ...' : 'เข้าสู่ระบบ'}
+          </button>
+        </form>
+      </div>
+    </>
   );
 }
 

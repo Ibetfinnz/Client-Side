@@ -1,6 +1,6 @@
 .navbar {
-  background: var(--white);
-  border-bottom: 1px solid var(--border);
+  background: #ffffff;
+  border-bottom: 1px solid #E5E7EB;
   position: sticky;
   top: 0;
   z-index: 100;
@@ -28,11 +28,11 @@
 .navbar-logo {
   font-weight: 700;
   font-size: 1.15rem;
-  color: var(--text-dark);
+  color: #111827;
   letter-spacing: -0.02em;
 }
 .navbar-logo span {
-  color: var(--blue);
+  color: #2563EB;
 }
 .navbar-links {
   display: flex;
@@ -41,25 +41,25 @@
 }
 .navbar-links a {
   text-decoration: none;
-  color: var(--text-mid);
+  color: #374151;
   font-size: 0.9rem;
   font-weight: 500;
   padding: 6px 14px;
-  border-radius: var(--radius-sm);
+  border-radius: 6px;
   transition:
     background 0.15s,
     color 0.15s;
 }
 .navbar-links a:hover {
-  background: var(--blue-light);
-  color: var(--blue);
+  background: #EFF6FF;
+  color: #2563EB;
 }
 .navbar-avatar {
   width: 34px;
   height: 34px;
   border-radius: 50%;
-  background: var(--border);
-  border: 2px solid var(--border);
+  background: #E5E7EB;
+  border: 2px solid #E5E7EB;
   cursor: pointer;
   transition: border-color 0.15s;
   display: flex;
@@ -67,7 +67,7 @@
   justify-content: center;
 }
 .navbar-avatar:hover {
-  border-color: var(--blue);
+  border-color: #2563EB;
 }
 .navbar-avatar svg {
   opacity: 0.4;
