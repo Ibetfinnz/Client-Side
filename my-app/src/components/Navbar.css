@@ -1,6 +1,6 @@
 .navbar {
-  background: #ffffff;
-  border-bottom: 1px solid #E5E7EB;
+  background: var(--white);
+  border-bottom: 1px solid var(--border);
   position: sticky;
   top: 0;
   z-index: 100;
@@ -20,11 +20,11 @@
   text-decoration: none;
   font-weight: 600;
   font-size: 28px;
-  color: #111827;
+  color: var(--text-dark);
 }
 
 .navbar-logo span {
-  color: #2563EB;
+  color: var(--blue);
 }
 
 .navbar-links {
@@ -35,27 +35,27 @@
 
 .navbar-links a {
   text-decoration: none;
-  color: #374151;
+  color: var(--text-mid);
   font-size: 16px;
   font-weight: 500;
   padding: 6px 14px;
-  border-radius: 6px;
+  border-radius: var(--radius-sm);
   transition:
     background 0.15s,
     color 0.15s;
 }
 
 .navbar-links a:hover {
-  background: #EFF6FF;
-  color: #2563EB;
+  background: var(--blue-light);
+  color: var(--blue);
 }
 
 .navbar-avatar {
   width: 34px;
   height: 34px;
   border-radius: 50%;
-  background: #E5E7EB;
-  border: 2px solid #E5E7EB;
+  background: var(--border);
+  border: 2px solid var(--border);
   cursor: pointer;
   transition: border-color 0.15s;
   display: flex;
@@ -65,7 +65,7 @@
 }
 
 .navbar-avatar:hover {
-  border-color: #2563EB;
+  border-color: var(--blue);
 }
 
 .navbar-avatar svg {
