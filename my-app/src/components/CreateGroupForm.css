@@ -1,4 +1,4 @@
-.card {
+.form-card {
   background: var(--white);
   border: 1px solid var(--border);
   border-radius: 14px;
@@ -9,7 +9,7 @@
   transition: box-shadow 0.25s;
 }
 
-.card:hover {
+.form-card:hover {
   box-shadow: var(--card-shadow-hover);
 }
 

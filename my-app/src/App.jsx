@@ -4,6 +4,8 @@ import Login from './page/Login.jsx';
 import Register from './page/Register.jsx';
 import CreateGroup from './page/CreateGroup.jsx';
 import Home from './page/Home.jsx';
+import GroupList from './page/GroupList.jsx';
+
 function App() {
   return (
     <>
@@ -14,6 +16,7 @@ function App() {
         <Route path="/Register" element={<Register />} />
         <Route path="/CreateGroup" element={<CreateGroup />} />
         <Route path="/Home" element={<Home />} />
+        <Route path="/GroupList" element={<GroupList />} />
       </Routes>
     </>
   );
