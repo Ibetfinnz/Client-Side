@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import './Register.css';
+import Header from '../components/Header';
 
 function Register() {
   const [form, setForm] = useState({ firstName: '', lastName: '', email: '', password: '' });
@@ -39,6 +40,8 @@ function Register() {
   };
 
   return (
+    <>
+    <Header />
     <div className="register-container">
       <form className="register-form" onSubmit={handleSubmit}>
         <div className="form-group">
@@ -46,7 +49,7 @@ function Register() {
           <input
             type="text"
             name="firstName"
-            placeholder="Value"
+            placeholder="ชื่อ"
             value={form.firstName}
             onChange={handleChange}
             required
@@ -57,7 +60,7 @@ function Register() {
           <input
             type="text"
             name="lastName"
-            placeholder="Value"
+            placeholder="นามสกุล"
             value={form.lastName}
             onChange={handleChange}
             required
@@ -68,7 +71,7 @@ function Register() {
           <input
             type="email"
             name="email"
-            placeholder="Value"
+            placeholder="email"
             value={form.email}
             onChange={handleChange}
             required
@@ -79,7 +82,7 @@ function Register() {
           <input
             type="password"
             name="password"
-            placeholder="Value"
+            placeholder="password"
             value={form.password}
             onChange={handleChange}
             required
@@ -91,6 +94,7 @@ function Register() {
         </button>
       </form>
     </div>
+    </>
   );
 }
 

@@ -7,6 +7,21 @@
   display: flex;
   align-items: center;
   justify-content: center;
+  background-image: url('https://media.discordapp.net/attachments/1483763938741977129/1484144561914646538/header20B9E081B8E088B8E0A7B8E0B1B8E080B8E0B2-2160x1080.jpg?ex=69bd28d5&is=69bbd755&hm=2cd7f030b7e112a17466381c5655e7a40b5f4cd23589841ce7cf7ce09bb56716&=&format=webp&width=1708&height=854');
+  position: relative;
+}
+
+.login-container::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.55); 
+  z-index: 0;
+}
+
+.login-form {
+  position: relative;
+  z-index: 1;
 }
 
 .login-form {
