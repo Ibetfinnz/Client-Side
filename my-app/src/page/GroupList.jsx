@@ -9,6 +9,7 @@ import { useEffect, useState } from "react";
 export default function GroupList() {
   const [groups, setGroups] = useState([]);
   const [error, setError] = useState("");
+  const [filters, setFilters] = useState(null);
 
   useEffect(() => {
     const fetchGroups = async () => {
@@ -25,26 +26,63 @@ export default function GroupList() {
     fetchGroups();
   }, []);
 
+  const subjectOptions = [
+    ...new Set(groups.map((g) => g.subject).filter(Boolean)),
+  ].sort();
+
+  const filteredGroups = !filters
+    ? groups
+    : groups.filter((g) => {
+        if (!filters.allDays && filters.date && filters.dateSelected) {
+          if (!g.study_date) return false;
+          const d = new Date(g.study_date);
+          const year = d.getFullYear();
+          const month = String(d.getMonth() + 1).padStart(2, "0");
+          const day = String(d.getDate()).padStart(2, "0");
+          const localGroupDate = `${year}-${month}-${day}`;
+
+          if (localGroupDate !== filters.date) return false;
+        }
+
+        if (!filters.allTimes && filters.startTime && filters.endTime) {
+          if (
+            g.start_time >= filters.endTime ||
+            g.end_time <= filters.startTime
+          )
+            return false;
+        }
+
+        if (filters.subjects.length > 0) {
+          if (!filters.subjects.includes(g.subject)) return false;
+        }
+
+        return true;
+      });
+
   return (
     <>
       <Navbar />
       <main>
-        <FilterGroup />
+        <FilterGroup subjectOptions={subjectOptions} onFilter={setFilters} />
         {error && (
           <div className="state-box">
             <p>{error}</p>
           </div>
         )}
- 
-        {!error && groups.length === 0 && (
+
+        {!error && filteredGroups.length === 0 && (
           <div className="state-box">
-            <p>ยังไม่มีกลุ่มอ่านหนังสือในขณะนี้</p>
+            <p>
+              {filters
+                ? "ไม่พบกลุ่มที่ตรงกับเงื่อนไข"
+                : "ยังไม่มีกลุ่มอ่านหนังสือในขณะนี้"}
+            </p>
           </div>
         )}
- 
-        {!error && groups.length > 0 && (
+
+        {!error && filteredGroups.length > 0 && (
           <div className="card-grid">
-            {groups.map((group) => (
+            {filteredGroups.map((group) => (
               <GroupCard key={group.id} group={group} />
             ))}
           </div>

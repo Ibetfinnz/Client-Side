@@ -117,6 +117,17 @@
   box-shadow: 0 3px 12px rgba(37, 99, 235, 0.32);
 }
 
+.btn-reset {
+  background: var(--text-soft);
+  color: var(--white);
+  box-shadow: 0 2px 8px rgba(37, 99, 235, 0.22);
+}
+
+.btn-reset:hover {
+  background: var(--text-mid);
+  box-shadow: 0 3px 12px rgba(37, 99, 235, 0.32);
+}
+
 .btn-green {
   background: var(--green);
   color: #fff;

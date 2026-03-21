@@ -3,11 +3,17 @@ import "./FilterGroup.css";
 import { useState, useRef } from "react";
 import { Link } from "react-router-dom";
 
-const SUBJECT_OPTIONS = ["ITPM", "ProbStat"];
-const todayStr = () => new Date().toISOString().split("T")[0];
+const todayStr = () => {
+  const d = new Date();
+  const year = d.getFullYear();
+  const month = String(d.getMonth() + 1).padStart(2, "0");
+  const day = String(d.getDate()).padStart(2, "0");
+  return `${year}-${month}-${day}`;
+};
 
-export default function FilterGroup() {
+export default function FilterGroup({ subjectOptions = [], onFilter }) {
   const [date, setDate] = useState(todayStr());
+  const [dateSelected, setDateSelected] = useState(false);
   const [allDays, setAllDays] = useState(false);
   const [startTime, setStartTime] = useState("");
   const [endTime, setEndTime] = useState("");
@@ -29,13 +35,27 @@ export default function FilterGroup() {
   };
 
   const handleSearch = () => {
-    const hasBothTimes = startTime !== "" && endTime !== "";
-
-    console.log({
-      date: allDays ? "ทุกวัน" : date,
-      time: allTimes ? "ทุกเวลา" : hasBothTimes ? `${startTime} - ${endTime}` : "ไม่ได้ filter เวลา",
+    onFilter?.({
+      allDays,
+      date: allDays ? "" : date,
+      dateSelected: !allDays && dateSelected,
+      allTimes,
+      startTime: allTimes ? "" : startTime,
+      endTime: allTimes ? "" : endTime,
       subjects,
     });
+  };
+
+  const handleReset = () => {
+    setDate(todayStr());
+    setDateSelected(false);
+    setAllDays(false);
+    setStartTime("");
+    setEndTime("");
+    setAllTimes(false);
+    setSubjects([]);
+    if (selectRef.current) selectRef.current.value = "";
+    onFilter?.(null);
   };
 
   const addSubject = (value) => {
@@ -64,7 +84,7 @@ export default function FilterGroup() {
                 min={todayStr()}
                 value={date}
                 disabled={allDays}
-                onChange={(e) => setDate(e.target.value)}
+                onChange={(e) => { setDate(e.target.value); setDateSelected(true); }}
               />
             </div>
 
@@ -128,7 +148,7 @@ export default function FilterGroup() {
                 <option value="" disabled>
                   เลือกวิชา
                 </option>
-                {SUBJECT_OPTIONS.map((s) => (
+                {subjectOptions.map((s) => (
                   <option key={s} value={s} disabled={subjects.includes(s)}>
                     {s}
                   </option>
@@ -138,6 +158,10 @@ export default function FilterGroup() {
 
             <button className="btn btn-blue" onClick={handleSearch}>
               ค้นหา
+            </button>
+
+            <button className="btn btn-reset" onClick={handleReset}>
+              รีเซ็ต
             </button>
           </div>
 
