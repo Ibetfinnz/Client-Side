@@ -72,9 +72,10 @@
 }
 
 .navbar-auth a{
-  color: var(--text-dark);
+  color: var(--white);
   text-decoration: none;
-  border: 1px solid var(--border);
+  background-color: var(--blue);
+  border: 1px solid var(--blue);
   padding: 6px 18px;
   border-radius: 6px;
   font-size: 16px;
@@ -82,8 +83,9 @@
 }
 
 .navbar-auth a:hover{
-  color: var(--text-dark);
-  border-color: var(--blue-light);
+  color: var(--white);
+  border-color: var(--blue-hover);
+  background-color: var(--blue-hover);
 }
 
 .navbar-user {

@@ -1,4 +1,5 @@
 .card {
+  width: 350px;
   background: var(--white);
   border: 1px solid var(--border);
   border-radius: var(--radius);
@@ -88,16 +89,21 @@
 
 .card-subject {
   font-size: 14px;
-  color: var(--text-soft);
+  color: var(--text-dark);
   margin-bottom: 12px;
 }
 
-.card-desc {
+.card-datetime {
   font-size: 14px;
-  color: var(--text-mid);
+  color: var(--text-soft);
   line-height: 1.55;
-  margin-bottom: 16px;
+  margin-bottom: 8px;
   overflow: hidden;
+  margin-bottom: 12px;
+}
+
+.card-time{
+  margin-left: 8px;
 }
 
 .card-actions {
@@ -145,4 +151,10 @@
 
 .btn-join:hover {
   background: var(--blue-hover);
+}
+
+.btn-join:disabled {
+  background: var(--border);
+  color: var(--text-mid);
+  cursor: default;
 }
