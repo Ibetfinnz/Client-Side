@@ -142,7 +142,7 @@ export default function FilterGroup() {
           </div>
 
           <div className="filter-right">
-            <Link to={"/CreateGroup"}>
+            <Link to={"/create-group"}>
               <button className="btn btn-green">สร้างกลุ่มอ่านหนังสือ</button>
             </Link>
           </div>

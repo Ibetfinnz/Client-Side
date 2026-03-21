@@ -1,4 +1,6 @@
 import './Home.css';
+
+import { Link } from 'react-router-dom';
  
 function Home() {
   return (
@@ -14,7 +16,7 @@ function Home() {
         <div className="hero-content">
           <h1 className="hero-title">IT Study Hub</h1>
           <p className="hero-subtitle">เว็บไซต์หาเพื่อนอ่านหนังสือภายในคณะ</p>
-          <button className="hero-btn">ดูกลุ่มทั้งหมด →</button>
+          <Link to={"/group-list"} className="hero-btn">ดูกลุ่มทั้งหมด →</Link>
         </div>
       </section>
  

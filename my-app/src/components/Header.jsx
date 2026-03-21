@@ -6,8 +6,8 @@ function Header() {
     <header className="app-header">
       <Link to="/" className="logo">IT Study Hub</Link> 
       <nav className="nav-links">
-        <Link to="/Login">เข้าสู่ระบบ</Link>
-        <Link to="/Register">สมัครสมาชิก</Link>
+        <Link to="/login">เข้าสู่ระบบ</Link>
+        <Link to="/register">สมัครสมาชิก</Link>
       </nav>
     </header>
   );

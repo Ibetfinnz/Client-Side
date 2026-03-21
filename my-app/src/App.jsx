@@ -12,11 +12,11 @@ function App() {
       <Header />
       <Routes>
         <Route path="/" element={<Navigate to="/Home" />} />
-        <Route path="/Login" element={<Login />} />
-        <Route path="/Register" element={<Register />} />
-        <Route path="/CreateGroup" element={<CreateGroup />} />
-        <Route path="/Home" element={<Home />} />
-        <Route path="/GroupList" element={<GroupList />} />
+        <Route path="/login" element={<Login />} />
+        <Route path="/register" element={<Register />} />
+        <Route path="/create-group" element={<CreateGroup />} />
+        <Route path="/home" element={<Home />} />
+        <Route path="/group-list" element={<GroupList />} />
       </Routes>
     </>
   );

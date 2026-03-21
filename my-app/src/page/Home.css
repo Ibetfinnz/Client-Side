@@ -52,6 +52,7 @@
 }
 
 .hero-btn {
+  text-decoration: none;
   background: #2563eb;
   color: #fff;
   border: none;
