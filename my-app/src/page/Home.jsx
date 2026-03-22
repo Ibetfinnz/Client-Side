@@ -1,10 +1,12 @@
 import './Home.css';
-
+import Footer from "../components/Footer";
 import { Link } from 'react-router-dom';
+import Header from '../components/Header';
  
 function Home() {
   return (
     <div className="home-wrapper">
+      <Header />
       {/* Hero Section */}
       <section className="hero-section">
         <div className="hero-overlay" />
@@ -28,6 +30,7 @@ function Home() {
 
         </div>
       </section>
+      <Footer />
     </div>
   );
 }

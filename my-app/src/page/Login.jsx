@@ -1,13 +1,13 @@
 import { useState } from 'react';
-import { useNavigate } from 'react-router-dom'; // ← เพิ่ม
+import { useNavigate } from 'react-router-dom'; 
 import './Login.css';
-import Header from '../components/Header';
+import Header_Login from '../components/Header_Login';
 
 function Login() {
   const [form, setForm] = useState({ email: '', password: '' });
   const [message, setMessage] = useState('');
   const [loading, setLoading] = useState(false);
-  const navigate = useNavigate(); // ← เพิ่ม
+  const navigate = useNavigate(); 
 
   const handleChange = (e) => {
     setForm({ ...form, [e.target.name]: e.target.value });
@@ -39,7 +39,7 @@ function Login() {
 
   return (
     <>
-      <Header />
+      <Header_Login />
       <div className="login-container">
         <form className="login-form" onSubmit={handleSubmit}>
           <div className="form-group">

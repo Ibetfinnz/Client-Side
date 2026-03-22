@@ -9,7 +9,6 @@ import GroupList from './page/GroupList.jsx';
 function App() {
   return (
     <>
-      <Header />
       <Routes>
         <Route path="/" element={<Navigate to="/Home" />} />
         <Route path="/login" element={<Login />} />

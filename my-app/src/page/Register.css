@@ -1,16 +1,14 @@
 .register-container {
-  min-height: 100vh;        /* ← เต็มหน้าจอ */
+  min-height: 100vh;      
   width: 100%;
   display: flex;
-  align-items: center;      /* ← จัดกึ่งกลางแนวตั้ง */
+  align-items: center;     
   justify-content: center;
-  background-image: url('https://media.discordapp.net/attachments/1483763938741977129/1484144561914646538/header20B9E081B8E088B8E0A7B8E0B1B8E080B8E0B2-2160x1080.jpg?ex=69bd28d5&is=69bbd755&hm=2cd7f030b7e112a17466381c5655e7a40b5f4cd23589841ce7cf7ce09bb56716&=&format=webp&width=1708&height=854');
+  background-image: url('https://media.discordapp.net/attachments/1483763938741977129/1484144561914646538/header20B9E081B8E088B8E0A7B8E0B1B8E080B8E0B2-2160x1080.jpg?ex=69c07495&is=69bf2315&hm=78a13e4031ede75fd7a2e7848ec99b4479077e2a3e273f27382affb917a9f6c5&=&format=webp&width=1712&height=856');
   background-size: cover;
   background-position: top center;
   position: relative;
 }
-
-/* เพิ่ม overlay ทำให้ภาพมืด */
 .register-container::before {
   content: '';
   position: absolute;

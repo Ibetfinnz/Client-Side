@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import './Register.css';
-import Header from '../components/Header';
+import Header_Login from '../components/Header_Login';
 
 function Register() {
   const [form, setForm] = useState({ firstName: '', lastName: '', email: '', password: '' });
@@ -41,7 +41,7 @@ function Register() {
 
   return (
     <>
-    <Header />
+    <Header_Login />
     <div className="register-container">
       <form className="register-form" onSubmit={handleSubmit}>
         <div className="form-group">
