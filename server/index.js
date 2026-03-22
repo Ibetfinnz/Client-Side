@@ -9,11 +9,9 @@ const app = express();
 const PORT = process.env.PORT || 5000;
 const JWT_SECRET = process.env.JWT_SECRET || 'your_secret_key';
 
-// --- Middleware ---
-app.use(cors({ origin: 'http://localhost:5173' })); // Vite default port
+app.use(cors({ origin: 'http://localhost:5173' }));
 app.use(express.json());
 
-// --- PostgreSQL Connection ---
 const pool = new Pool({
   host: process.env.DB_HOST || 'localhost',
   port: process.env.DB_PORT || 5432,
@@ -22,14 +20,12 @@ const pool = new Pool({
   password: process.env.DB_PASSWORD || '',
 });
 
-// --- Create all tables ---
 pool.query(`
   CREATE TABLE IF NOT EXISTS users (
     id SERIAL PRIMARY KEY,
     username VARCHAR(100) NOT NULL,
     email VARCHAR(150) UNIQUE NOT NULL,
     password VARCHAR(255) NOT NULL,
-    avatar_url TEXT,
     created_at TIMESTAMP DEFAULT NOW()
   );
 
@@ -59,7 +55,6 @@ pool.query(`
 .then(() => console.log('✅ All tables are ready'))
 .catch(err => console.error('❌ Table creation error:', err.message));
 
-// --- DB Test Route ---
 app.get('/db-test', async (req, res) => {
   try {
     const result = await pool.query('SELECT NOW()');
@@ -69,14 +64,11 @@ app.get('/db-test', async (req, res) => {
   }
 });
 
-// --- Register Route ---
 app.post('/api/register', async (req, res) => {
   const { username, email, password } = req.body;
-
   if (!username || !email || !password) {
     return res.status(400).json({ error: 'กรุณากรอกข้อมูลให้ครบถ้วน' });
   }
-
   try {
     const hashedPassword = await bcrypt.hash(password, 10);
     const newUser = await pool.query(
@@ -86,7 +78,6 @@ app.post('/api/register', async (req, res) => {
     res.status(201).json({ message: 'สมัครสมาชิกสำเร็จ', user: newUser.rows[0] });
   } catch (err) {
     if (err.code === '23505') {
-      // Unique constraint violation
       res.status(409).json({ error: 'Username หรือ Email นี้ถูกใช้ไปแล้ว' });
     } else {
       console.error(err);
@@ -95,30 +86,22 @@ app.post('/api/register', async (req, res) => {
   }
 });
 
-// --- Login Route ---
 app.post('/api/login', async (req, res) => {
   const { email, password } = req.body;
-
   if (!email || !password) {
     return res.status(400).json({ error: 'กรุณากรอกอีเมลและรหัสผ่าน' });
   }
-
   try {
     const result = await pool.query('SELECT * FROM users WHERE email = $1', [email]);
-
     if (result.rows.length === 0) {
       return res.status(404).json({ error: 'ไม่พบผู้ใช้งาน' });
     }
-
     const user = result.rows[0];
     const validPassword = await bcrypt.compare(password, user.password);
-
     if (!validPassword) {
       return res.status(401).json({ error: 'รหัสผ่านไม่ถูกต้อง' });
     }
-
     const token = jwt.sign({ id: user.id, email: user.email }, JWT_SECRET, { expiresIn: '1h' });
-
     res.json({ message: 'เข้าสู่ระบบสำเร็จ', token, username: user.username });
   } catch (err) {
     console.error(err);
@@ -126,17 +109,14 @@ app.post('/api/login', async (req, res) => {
   }
 });
 
-// --- Start Server ---
 app.listen(PORT, () => {
   console.log(`🚀 Server running at http://localhost:${PORT}`);
 });
 
-// --- Middleware: ตรวจสอบ JWT Token ---
 const authenticateToken = (req, res, next) => {
   const authHeader = req.headers['authorization'];
-  const token = authHeader && authHeader.split(' ')[1]; // Bearer <token>
+  const token = authHeader && authHeader.split(' ')[1];
   if (!token) return res.status(401).json({ error: 'กรุณาเข้าสู่ระบบก่อน' });
-
   jwt.verify(token, JWT_SECRET, (err, user) => {
     if (err) return res.status(403).json({ error: 'Token ไม่ถูกต้องหรือหมดอายุ' });
     req.user = user;
@@ -144,14 +124,11 @@ const authenticateToken = (req, res, next) => {
   });
 };
 
-// --- สร้างกลุ่มอ่านหนังสือ ---
 app.post('/api/groups', authenticateToken, async (req, res) => {
   const { image_url, title, subject, location, study_date, start_time, end_time, max_members, description } = req.body;
-
   if (!title || !subject || !location || !study_date || !start_time || !end_time || !max_members) {
     return res.status(400).json({ error: 'กรุณากรอกข้อมูลให้ครบถ้วน' });
   }
-
   try {
     const result = await pool.query(
       `INSERT INTO study_groups 
@@ -159,13 +136,10 @@ app.post('/api/groups', authenticateToken, async (req, res) => {
        VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9,$10) RETURNING *`,
       [image_url, title, subject, location, study_date, start_time, end_time, max_members, description, req.user.id]
     );
-
-    // เพิ่มคนสร้างเป็นสมาชิกอัตโนมัติ
     await pool.query(
       'INSERT INTO group_members (group_id, user_id) VALUES ($1, $2)',
       [result.rows[0].id, req.user.id]
     );
-
     res.status(201).json({ message: 'สร้างกลุ่มสำเร็จ', group: result.rows[0] });
   } catch (err) {
     console.error(err);
@@ -173,19 +147,17 @@ app.post('/api/groups', authenticateToken, async (req, res) => {
   }
 });
 
-// --- ดึงรายการกลุ่มทั้งหมด ---
 app.get('/api/groups', async (req, res) => {
   try {
     const result = await pool.query(`
       SELECT 
         sg.*,
         u.username AS creator_name,
-        u.avatar_url AS creator_avatar,
         COUNT(gm.user_id)::INT AS current_members
       FROM study_groups sg
       LEFT JOIN users u ON sg.created_by = u.id
       LEFT JOIN group_members gm ON sg.id = gm.group_id
-      GROUP BY sg.id, u.username, u.avatar_url
+      GROUP BY sg.id, u.username
       ORDER BY sg.created_at DESC
     `);
     res.json(result.rows);
@@ -195,20 +167,18 @@ app.get('/api/groups', async (req, res) => {
   }
 });
 
-// --- ดึงรายละเอียดกลุ่ม (พร้อมรายชื่อสมาชิก) ---
 app.get('/api/groups/:id', async (req, res) => {
   try {
     const groupResult = await pool.query(`
       SELECT 
         sg.*,
         u.username AS creator_name,
-        u.avatar_url AS creator_avatar,
         COUNT(gm.user_id)::INT AS current_members
       FROM study_groups sg
       LEFT JOIN users u ON sg.created_by = u.id
       LEFT JOIN group_members gm ON sg.id = gm.group_id
       WHERE sg.id = $1
-      GROUP BY sg.id, u.username, u.avatar_url
+      GROUP BY sg.id, u.username
     `, [req.params.id]);
 
     if (groupResult.rows.length === 0) {
@@ -216,29 +186,23 @@ app.get('/api/groups/:id', async (req, res) => {
     }
 
     const membersResult = await pool.query(`
-      SELECT u.id, u.username, u.avatar_url, gm.joined_at
+      SELECT u.id, u.username, gm.joined_at
       FROM group_members gm
       JOIN users u ON gm.user_id = u.id
       WHERE gm.group_id = $1
     `, [req.params.id]);
 
-    res.json({
-      ...groupResult.rows[0],
-      members: membersResult.rows
-    });
+    res.json({ ...groupResult.rows[0], members: membersResult.rows });
   } catch (err) {
     console.error(err);
     res.status(500).json({ error: 'เกิดข้อผิดพลาดภายในเซิร์ฟเวอร์' });
   }
 });
 
-// --- เข้าร่วมกลุ่ม ---
 app.post('/api/groups/:id/join', authenticateToken, async (req, res) => {
   const groupId = req.params.id;
   const userId = req.user.id;
-
   try {
-    // ตรวจสอบว่ากลุ่มเต็มหรือยัง
     const group = await pool.query(`
       SELECT sg.max_members, COUNT(gm.user_id)::INT AS current_members
       FROM study_groups sg
@@ -258,7 +222,6 @@ app.post('/api/groups/:id/join', authenticateToken, async (req, res) => {
       'INSERT INTO group_members (group_id, user_id) VALUES ($1, $2)',
       [groupId, userId]
     );
-
     res.json({ message: 'เข้าร่วมกลุ่มสำเร็จ' });
   } catch (err) {
     if (err.code === '23505') {
@@ -269,7 +232,6 @@ app.post('/api/groups/:id/join', authenticateToken, async (req, res) => {
   }
 });
 
-// --- ออกจากกลุ่ม ---
 app.delete('/api/groups/:id/leave', authenticateToken, async (req, res) => {
   try {
     await pool.query(

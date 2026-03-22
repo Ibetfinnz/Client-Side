@@ -2,8 +2,35 @@ import './Home.css';
 import Footer from "../components/Footer";
 import { Link } from 'react-router-dom';
 import Header from '../components/Header';
- 
+import GroupCard from "../components/GroupCard";
+import { useEffect, useState } from "react";
+
 function Home() {
+  const [upcomingGroups, setUpcomingGroups] = useState([]);
+
+  useEffect(() => {
+    const fetchGroups = async () => {
+      try {
+        const res = await fetch("http://localhost:5000/api/groups");
+        if (!res.ok) return;
+        const data = await res.json();
+
+        const today = new Date();
+        today.setHours(0, 0, 0, 0);
+
+        const upcoming = data
+          .sort((a, b) => new Date(a.study_date) - new Date(b.study_date))
+          .slice(0, 3);
+
+        setUpcomingGroups(upcoming);
+      } catch (err) {
+        console.error(err);
+      }
+    };
+
+    fetchGroups();
+  }, []);
+
   return (
     <div className="home-wrapper">
       <Header />
@@ -21,18 +48,23 @@ function Home() {
           <Link to={"/group-list"} className="hero-btn">ดูกลุ่มทั้งหมด →</Link>
         </div>
       </section>
- 
+
       {/* Section ด้านล่าง */}
       <section className="groups-section">
-        <h2 className="section-title">กลุ่มที่กำลังจะเริ่มตัวเร็วๆ นี้</h2>
+        <h2 className="section-title">กลุ่มที่กำลังจะเริ่มติวเร็วๆ นี้</h2>
         <div className="group-cards">
-          {/* Card ตัวอย่าง */}
-
+          {upcomingGroups.length > 0 ? (
+            upcomingGroups.map((group) => (
+              <GroupCard key={group.id} group={group} />
+            ))
+          ) : (
+            <p className="no-groups">ยังไม่มีกลุ่มที่กำลังจะเริ่มในเร็วๆ นี้</p>
+          )}
         </div>
       </section>
       <Footer />
     </div>
   );
 }
- 
+
 export default Home;
