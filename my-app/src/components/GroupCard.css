@@ -158,3 +158,20 @@
   color: var(--text-mid);
   cursor: default;
 }
+
+.btn-delete {
+  padding: 8px 16px;
+  background: #dc2626;
+  color: #fff;
+  border: none;
+  border-radius: 20px;
+  font-size: 14px;
+  font-weight: 500;
+  cursor: pointer;
+  font-family: inherit;
+  transition: background 0.2s;
+}
+
+.btn-delete:hover {
+  background: #b91c1c;
+}

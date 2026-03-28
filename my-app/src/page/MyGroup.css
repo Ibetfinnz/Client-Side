@@ -1,0 +1,164 @@
+.my-groups-page {
+  display: flex;
+  flex-direction: column;
+  background: var(--bg);
+}
+
+.my-groups-main {
+  width: 100%;
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 32px 24px 64px;
+}
+
+.my-groups-title {
+  font-size: 24px;
+  font-weight: 700;
+  color: var(--text-dark);
+  margin-bottom: 24px;
+}
+
+.my-groups-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 20px;
+}
+
+.my-groups-card {
+  background: var(--white);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+}
+
+.my-groups-card-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 12px 14px 8px;
+}
+
+.my-groups-card-owner {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 14px;
+  font-weight: 500;
+  color: var(--text-dark);
+}
+
+.my-groups-card-avatar {
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  background: #3b82f6;
+  color: #fff;
+  font-size: 13px;
+  font-weight: 700;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.my-groups-card-menu {
+  background: none;
+  border: none;
+  font-size: 20px;
+  color: var(--text-soft);
+  cursor: pointer;
+  padding: 0 4px;
+  line-height: 1;
+}
+
+.my-groups-card-image {
+  width: 100%;
+  background: #e8e8f0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 16px 0;
+}
+
+.my-groups-card-body {
+  padding: 12px 14px;
+  flex: 1;
+}
+
+.my-groups-card-title {
+  font-size: 15px;
+  font-weight: 600;
+  color: var(--text-dark);
+  margin-bottom: 2px;
+}
+
+.my-groups-card-subject {
+  font-size: 13px;
+  color: var(--text-soft);
+  margin-bottom: 8px;
+}
+
+.my-groups-card-description {
+  font-size: 13px;
+  color: var(--text-mid);
+  line-height: 1.6;
+}
+
+.my-groups-card-footer {
+  display: flex;
+  justify-content: flex-end;
+  gap: 8px;
+  padding: 12px 14px;
+}
+
+.my-groups-btn-detail {
+  padding: 8px 16px;
+  background: #2563eb;
+  color: #fff;
+  border: none;
+  border-radius: 20px;
+  font-size: 14px;
+  font-weight: 500;
+  cursor: pointer;
+  font-family: inherit;
+  transition: background 0.2s;
+}
+
+.my-groups-btn-detail:hover {
+  background: #1d4ed8;
+}
+
+.my-groups-btn-delete {
+  padding: 8px 16px;
+  background: #dc2626;
+  color: #fff;
+  border: none;
+  border-radius: 20px;
+  font-size: 14px;
+  font-weight: 500;
+  cursor: pointer;
+  font-family: inherit;
+  transition: background 0.2s;
+}
+
+.my-groups-btn-delete:hover {
+  background: #b91c1c;
+}
+
+@media (max-width: 1024px) {
+  .my-groups-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+@media (max-width: 640px) {
+  .my-groups-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .my-groups-main {
+    padding: 24px 16px 40px;
+  }
+}

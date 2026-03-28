@@ -2,7 +2,7 @@ import "./GroupCard.css";
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 
-export default function GroupCard({ group, onJoined }) {
+export default function GroupCard({ group, onJoined, onDeleted }) {
   const navigate = useNavigate();
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
@@ -20,6 +20,8 @@ export default function GroupCard({ group, onJoined }) {
     current_members,
     max_members,
     creator_name,
+    is_owner,
+    is_member,
   } = group;
 
   const firstLetter = creator_name ? creator_name.charAt(0).toUpperCase() : "?";
@@ -44,29 +46,37 @@ export default function GroupCard({ group, onJoined }) {
       setError("กรุณาเข้าสู่ระบบก่อน");
       return;
     }
-
     setLoading(true);
     setError("");
-
     try {
       const res = await fetch(`http://localhost:5000/api/groups/${id}/join`, {
         method: "POST",
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
+        headers: { Authorization: `Bearer ${token}` },
       });
-
       const data = await res.json();
-
       if (!res.ok) {
         setError(data.error || "เกิดข้อผิดพลาด");
       } else {
-        if (onJoined) onJoined(); // refresh รายการกลุ่มจาก parent
+        if (onJoined) onJoined();
       }
     } catch (err) {
       setError("ไม่สามารถเชื่อมต่อกับเซิร์ฟเวอร์ได้");
     } finally {
       setLoading(false);
+    }
+  };
+
+  const handleDelete = async () => {
+    if (!window.confirm("ยืนยันการลบกลุ่มนี้?")) return;
+    const token = localStorage.getItem("token");
+    try {
+      const res = await fetch(`http://localhost:5000/api/groups/${id}`, {
+        method: "DELETE",
+        headers: { Authorization: `Bearer ${token}` },
+      });
+      if (res.ok && onDeleted) onDeleted();
+    } catch (err) {
+      alert("ไม่สามารถลบกลุ่มได้");
     }
   };
 
@@ -77,13 +87,11 @@ export default function GroupCard({ group, onJoined }) {
           <div className="author-avatar">{firstLetter}</div>
           <span className="author-name">{creator_name}</span>
         </div>
-        <span>
-          {current_members}/{max_members} คน
-        </span>
+        <span>{current_members}/{max_members} คน</span>
       </div>
 
       <div className="card-img">
-        {image_url ? <img src={image_url} alt={title} /> : <div></div>}
+        {image_url ? <img src={image_url} alt={title} /> : <div />}
       </div>
 
       <div className="card-body">
@@ -97,19 +105,26 @@ export default function GroupCard({ group, onJoined }) {
         {error && <p className="card-error">{error}</p>}
 
         <div className="card-actions">
+          {is_owner && (
+            <button className="btn-delete" onClick={handleDelete}>
+              ลบกลุ่มนี้
+            </button>
+          )}
           <button
             className="btn-outline"
             onClick={() => navigate(`/groups/${id}`)}
           >
             ดูรายละเอียด
           </button>
-          <button
-            className="btn-join"
-            disabled={isFull || loading}
-            onClick={handleJoin}
-          >
-            {loading ? "กำลังเข้าร่วม..." : isFull ? "กลุ่มเต็มแล้ว" : "เข้าร่วมกลุ่ม"}
-          </button>
+          {!is_owner && !is_member && (
+            <button
+              className="btn-join"
+              disabled={isFull || loading}
+              onClick={handleJoin}
+            >
+              {loading ? "กำลังเข้าร่วม..." : isFull ? "กลุ่มเต็มแล้ว" : "เข้าร่วมกลุ่ม"}
+            </button>
+          )}
         </div>
       </div>
     </div>
