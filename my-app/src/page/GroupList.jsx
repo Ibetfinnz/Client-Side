@@ -1,5 +1,5 @@
 import "./GroupList.css";
-import Navbar from "../components/navbar";
+import Navbar from "../components/Navbar";
 import Footer from "../components/Footer";
 import FilterGroup from "../components/FilterGroup";
 import GroupCard from "../components/GroupCard";

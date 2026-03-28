@@ -1,4 +1,4 @@
-main {
+.create-group-main {
   flex: 1;
   display: flex;
   flex-direction: column;
@@ -6,7 +6,7 @@ main {
   padding: 52px 24px 72px;
 }
 
-.page-title {
+.create-group-title {
   font-size: 28px;
   font-weight: 600;
   color: #111827;
