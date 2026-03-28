@@ -70,6 +70,19 @@ export default function GroupDetail() {
                     </div>
 
                     <button className="group-detail-join-btn">เข้าร่วมกลุ่มนี้</button>
+                    
+                    {/* รอใส่เงื่อนไข */}
+                    {/* {!isMember && !isOwner && (
+                        <button className="group-detail-join-btn">เข้าร่วมกลุ่มนี้</button>
+                    )}
+
+                    {isMember && !isOwner && (
+                        <button className="group-detail-leave-btn">ออกจากกลุ่มนี้</button>
+                    )}
+
+                    {isOwner && (
+                        <button className="group-detail-leave-btn">ลบกลุ่มนี้</button>
+                    )} */}
                 </aside>
             </main>
 

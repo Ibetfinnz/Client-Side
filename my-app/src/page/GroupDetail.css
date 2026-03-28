@@ -111,7 +111,7 @@
 }
 
 .group-detail-join-btn {
-  width: 100%;
+  width: 50%;
   padding: 12px;
   background: var(--green);
   border: none;
@@ -122,8 +122,32 @@
   cursor: pointer;
   transition: background 0.2s;
   font-family: inherit;
+  display: block;
+  margin-left: auto;
+}
+
+.group-detail-leave-btn {
+  width: 50%;
+  padding: 12px;
+  margin-top: 10px;
+  background: var(--red);
+  border: none;
+  color: #fff;
+  font-size: 15px;
+  font-weight: 700;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: background 0.2s;
+  font-family: inherit;
+  display: block;
+  margin-left: auto;
 }
 
 .group-detail-join-btn:hover {
   background: var(--green-hover);
 }
+
+.group-detail-leave-btn:hover {
+  background: var(--red-hover);
+}
+
