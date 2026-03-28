@@ -6,6 +6,7 @@ import CreateGroup from './page/CreateGroup.jsx';
 import Home from './page/Home.jsx';
 import GroupList from './page/GroupList.jsx';
 import GroupDetail from './page/GroupDetail.jsx';
+import MyGroup from './page/MyGroup.jsx';
 
 function App() {
   return (
@@ -17,7 +18,8 @@ function App() {
         <Route path="/create-group" element={<CreateGroup />} />
         <Route path="/home" element={<Home />} />
         <Route path="/group-list" element={<GroupList />} />
-        <Route path="/group-detail" element={<GroupDetail />} />
+        <Route path="/groups/:id" element={<GroupDetail />} />
+        <Route path="/my-groups" element={<MyGroup />} />
       </Routes>
     </>
   );

@@ -2,16 +2,170 @@ import "./GroupDetail.css";
 import Navbar from "../components/Navbar";
 import Footer from "../components/Footer";
 
+import { useEffect, useState } from "react";
+import { useNavigate, useParams } from "react-router-dom";
+
 export default function GroupDetail() {
+    const navigate = useNavigate();
+    const { id } = useParams();
+
+    const [group, setGroup] = useState(null);
+    const [loading, setLoading] = useState(true);
+    const [error, setError] = useState("");
+    const [actionLoading, setActionLoading] = useState(false);
+    const [actionError, setActionError] = useState("");
+
+    const fetchGroupDetail = async () => {
+        setLoading(true);
+        setError("");
+
+        try {
+            const token = localStorage.getItem("token");
+            const headers = token ? { Authorization: `Bearer ${token}` } : {};
+            const res = await fetch(`http://localhost:5000/api/groups/${id}`, { headers });
+            const data = await res.json();
+
+            if (!res.ok) {
+                setError(data.error || "โหลดข้อมูลกลุ่มไม่สำเร็จ");
+                setGroup(null);
+            } else {
+                setGroup(data);
+            }
+        } catch (err) {
+            setError("ไม่สามารถเชื่อมต่อกับเซิร์ฟเวอร์ได้");
+            setGroup(null);
+        } finally {
+            setLoading(false);
+        }
+    };
+
+    useEffect(() => {
+        if (!id) {
+            setError("ไม่พบรหัสกลุ่ม");
+            setLoading(false);
+            return;
+        }
+
+        fetchGroupDetail();
+    }, [id]);
+
+    const formatDate = (dateStr) => {
+        if (!dateStr) return "-";
+        return new Date(dateStr).toLocaleDateString("th-TH", {
+            day: "numeric",
+            month: "short",
+            year: "numeric",
+        });
+    };
+
+    const formatTime = (timeStr) => (timeStr ? timeStr.slice(0, 5) : "-");
+
+    const handleJoin = async () => {
+        const token = localStorage.getItem("token");
+        if (!token) {
+            setActionError("กรุณาเข้าสู่ระบบก่อน");
+            return;
+        }
+
+        setActionLoading(true);
+        setActionError("");
+        try {
+            const res = await fetch(`http://localhost:5000/api/groups/${id}/join`, {
+                method: "POST",
+                headers: { Authorization: `Bearer ${token}` },
+            });
+            const data = await res.json();
+
+            if (!res.ok) {
+                setActionError(data.error || "เข้าร่วมกลุ่มไม่สำเร็จ");
+            } else {
+                await fetchGroupDetail();
+            }
+        } catch (err) {
+            setActionError("ไม่สามารถเชื่อมต่อกับเซิร์ฟเวอร์ได้");
+        } finally {
+            setActionLoading(false);
+        }
+    };
+
+    const handleLeave = async () => {
+        const token = localStorage.getItem("token");
+        if (!token) {
+            setActionError("กรุณาเข้าสู่ระบบก่อน");
+            return;
+        }
+
+        setActionLoading(true);
+        setActionError("");
+        try {
+            const res = await fetch(`http://localhost:5000/api/groups/${id}/leave`, {
+                method: "DELETE",
+                headers: { Authorization: `Bearer ${token}` },
+            });
+            const data = await res.json();
+
+            if (!res.ok) {
+                setActionError(data.error || "ออกจากกลุ่มไม่สำเร็จ");
+            } else {
+                await fetchGroupDetail();
+            }
+        } catch (err) {
+            setActionError("ไม่สามารถเชื่อมต่อกับเซิร์ฟเวอร์ได้");
+        } finally {
+            setActionLoading(false);
+        }
+    };
+
+    const handleDelete = async () => {
+        const token = localStorage.getItem("token");
+        if (!token) {
+            setActionError("กรุณาเข้าสู่ระบบก่อน");
+            return;
+        }
+
+        if (!window.confirm("ยืนยันการลบกลุ่มนี้?")) return;
+
+        setActionLoading(true);
+        setActionError("");
+        try {
+            const res = await fetch(`http://localhost:5000/api/groups/${id}`, {
+                method: "DELETE",
+                headers: { Authorization: `Bearer ${token}` },
+            });
+            const data = await res.json();
+
+            if (!res.ok) {
+                setActionError(data.error || "ลบกลุ่มไม่สำเร็จ");
+            } else {
+                navigate("/my-groups");
+            }
+        } catch (err) {
+            setActionError("ไม่สามารถเชื่อมต่อกับเซิร์ฟเวอร์ได้");
+        } finally {
+            setActionLoading(false);
+        }
+    };
+
+    const isOwner = Boolean(group?.is_owner);
+    const isMember = Boolean(group?.is_member);
+
     return (
         <div className="group-detail-page">
             <Navbar />
 
             {/* Main */}
             <main className="group-detail-main">
+                {loading && <p className="group-detail-status">กำลังโหลดข้อมูล...</p>}
+                {!loading && error && <p className="group-detail-status group-detail-status-error">{error}</p>}
+
+                {!loading && !error && group && (
+                    <>
                 {/* Left */}
                 <section className="group-detail-left">
                     <div className="group-detail-image">
+                        {group.image_url ? (
+                            <img src={group.image_url} alt={group.title} className="group-detail-image-content" />
+                        ) : (
                         <svg width="180" height="160" viewBox="0 0 180 160" fill="none">
                             <path d="M75 30 L110 85 L40 85 Z" fill="#c4c4d4" />
                             <polygon
@@ -20,13 +174,14 @@ export default function GroupDetail() {
                             />
                             <rect x="80" y="100" width="42" height="42" rx="10" fill="#c4c4d4" />
                         </svg>
+                        )}
                     </div>
 
                     <div className="group-detail-topic">
-                        <h2>ชื่อหัวข้อ</h2>
-                        <p className="group-detail-subject">วิชา</p>
+                        <h2>{group.title}</h2>
+                        <p className="group-detail-subject">วิชา: {group.subject}</p>
                         <p className="group-detail-description">
-                            รายละเอียดในการติว abcdefghijklmnopqrstuvwxyz
+                            {group.description || "-"}
                         </p>
                     </div>
                 </section>
@@ -40,14 +195,14 @@ export default function GroupDetail() {
                                 <path d="M21 10c0 7-9 13-9 13S3 17 3 10a9 9 0 0118 0z" />
                                 <circle cx="12" cy="10" r="3" />
                             </svg>
-                            Name
+                            {group.location}
                         </div>
                         <div className="group-detail-row">
                             <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#374151" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
                                 <circle cx="12" cy="12" r="10" />
                                 <polyline points="12 6 12 12 16 14" />
                             </svg>
-                            Name
+                            {formatDate(group.study_date)} {formatTime(group.start_time)} - {formatTime(group.end_time)}
                         </div>
                     </div>
 
@@ -55,35 +210,42 @@ export default function GroupDetail() {
                         <h3>สร้างโดย</h3>
                         <div className="group-detail-user">
                             <div className="group-detail-avatar" />
-                            <span>Name</span>
+                            <span>{group.creator_name}</span>
                         </div>
                     </div>
 
                     <div className="group-detail-card">
-                        <h3>สมาชิกในกลุ่ม (5/12)</h3>
-                        {[1, 2, 3, 4].map((i) => (
-                            <div key={i} className="group-detail-user">
+                        <h3>สมาชิกในกลุ่ม ({group.current_members}/{group.max_members})</h3>
+                        {(group.members || []).map((member) => (
+                            <div key={member.id} className="group-detail-user">
                                 <div className="group-detail-avatar group-detail-avatar-small" />
-                                <span>Name</span>
+                                <span>{member.username}</span>
                             </div>
                         ))}
                     </div>
 
-                    <button className="group-detail-join-btn">เข้าร่วมกลุ่มนี้</button>
-                    
-                    {/* รอใส่เงื่อนไข */}
-                    {/* {!isMember && !isOwner && (
-                        <button className="group-detail-join-btn">เข้าร่วมกลุ่มนี้</button>
+                    {!isMember && !isOwner && (
+                        <button className="group-detail-join-btn" onClick={handleJoin} disabled={actionLoading}>
+                            {actionLoading ? "กำลังดำเนินการ..." : "เข้าร่วมกลุ่มนี้"}
+                        </button>
                     )}
 
                     {isMember && !isOwner && (
-                        <button className="group-detail-leave-btn">ออกจากกลุ่มนี้</button>
+                        <button className="group-detail-leave-btn" onClick={handleLeave} disabled={actionLoading}>
+                            {actionLoading ? "กำลังดำเนินการ..." : "ออกจากกลุ่มนี้"}
+                        </button>
                     )}
 
                     {isOwner && (
-                        <button className="group-detail-leave-btn">ลบกลุ่มนี้</button>
-                    )} */}
+                        <button className="group-detail-leave-btn" onClick={handleDelete} disabled={actionLoading}>
+                            {actionLoading ? "กำลังดำเนินการ..." : "ลบกลุ่มนี้"}
+                        </button>
+                    )}
+
+                    {actionError && <p className="group-detail-status group-detail-status-error">{actionError}</p>}
                 </aside>
+                    </>
+                )}
             </main>
 
             <Footer />
