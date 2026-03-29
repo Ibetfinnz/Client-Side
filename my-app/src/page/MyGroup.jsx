@@ -1,35 +1,77 @@
 import "./MyGroup.css";
 import Navbar from "../components/Navbar";
 import Footer from "../components/Footer";
+import GroupCard from "../components/GroupCard";
+import { getCurrentUser, groupApi } from "../services/api";
+import { useCallback, useEffect, useMemo, useState } from "react";
 
 export default function MyGroup() {
-    const mockGroups = [
-        { id: 1, ownerName: "Tibet Sawangkarn", title: "ชื่อเรื่องที่จะติว", subject: "วิชาที่ติว", description: "รายละเอียดในการติว abcdefghijklmnopqrstuvwxyz", isOwner: false },
-        { id: 2, ownerName: "Thanasit Tungjai", title: "ชื่อเรื่องที่จะติว", subject: "วิชาที่ติว", description: "รายละเอียดในการติว abcdefghijklmnopqrstuvwxyz", isOwner: false },
-        { id: 3, ownerName: "Nutthawat Chotpanjawong", title: "ชื่อเรื่องที่จะติว", subject: "วิชาที่ติว", description: "รายละเอียดในการติว abcdefghijklmnopqrstuvwxyz", isOwner: true },
-    ];
-    return (
+    const [groups, setGroups] = useState([]);
+    const [loading, setLoading] = useState(true);
+    const [error, setError] = useState("");
 
+    const currentUser = useMemo(() => getCurrentUser(), []);
+
+    const fetchMyGroups = useCallback(async () => {
+        setLoading(true);
+        setError("");
+
+        try {
+            const data = await groupApi.getGroups();
+
+            const myGroups = data.filter((group) => {
+                const byUserId = currentUser.userId && Number(group.created_by) === Number(currentUser.userId);
+                const byUsername = currentUser.username && group.creator_name === currentUser.username;
+                return Boolean(byUserId || byUsername);
+            });
+
+            setGroups(myGroups);
+        } catch (err) {
+            setError(err.message || "โหลดข้อมูลไม่สำเร็จ");
+            setGroups([]);
+        } finally {
+            setLoading(false);
+        }
+    }, [currentUser.userId, currentUser.username]);
+
+    useEffect(() => {
+        if (!currentUser.token) {
+            setError("กรุณาเข้าสู่ระบบเพื่อดูกลุ่มของคุณ");
+            setLoading(false);
+            return;
+        }
+
+        fetchMyGroups();
+    }, [currentUser.token, fetchMyGroups]);
+
+    return (
         <div className="my-groups-page">
             <Navbar />
 
             <main className="my-groups-main">
                 <h2 className="my-groups-title">กลุ่มของฉัน</h2>
 
-                <div className="my-groups-grid">
+                {loading && <p>กำลังโหลดข้อมูล...</p>}
+                {!loading && error && <p>{error}</p>}
+
+                {!loading && !error && groups.length === 0 && (
+                    <p>คุณยังไม่ได้สร้างกลุ่ม</p>
+                )}
+
+                {!loading && !error && groups.length > 0 && (
                     <div className="my-groups-grid">
                         {groups.map((group) => (
-                            <MyGroupCard
+                            <GroupCard
                                 key={group.id}
-                                group={group}
+                                group={{ ...group, is_owner: true }}
                                 onDeleted={fetchMyGroups}
                             />
                         ))}
                     </div>
-                </div>
+                )}
             </main>
 
             <Footer />
         </div>
-    )
+    );
 }
