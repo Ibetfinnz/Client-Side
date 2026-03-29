@@ -103,7 +103,7 @@ export default function GroupDetail() {
         setActionError("");
         try {
             await groupApi.deleteGroup(id);
-            navigate("/");
+            navigate("/my-groups");
         } catch (err) {
             setActionError(err.message || "ลบกลุ่มไม่สำเร็จ");
         } finally {

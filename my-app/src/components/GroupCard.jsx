@@ -54,7 +54,11 @@ export default function GroupCard({ group, onJoined, onDeleted }) {
     setError("");
     try {
       await groupApi.joinGroup(id);
-      if (onJoined) onJoined();
+      if (onJoined) {
+        await onJoined();
+        return;
+      }
+      navigate(`/groups/${id}`);
     } catch (err) {
       setError(err.message || "เกิดข้อผิดพลาด");
     } finally {
