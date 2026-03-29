@@ -232,6 +232,32 @@ app.post('/api/groups/:id/join', authenticateToken, async (req, res) => {
   }
 });
 
+app.delete('/api/groups/:id', authenticateToken, async (req, res) => {
+  const groupId = req.params.id;
+  const userId = req.user.id;
+
+  try {
+    const ownerResult = await pool.query(
+      'SELECT created_by FROM study_groups WHERE id = $1',
+      [groupId]
+    );
+
+    if (ownerResult.rows.length === 0) {
+      return res.status(404).json({ error: 'ไม่พบกลุ่มนี้' });
+    }
+
+    if (ownerResult.rows[0].created_by !== userId) {
+      return res.status(403).json({ error: 'คุณไม่มีสิทธิ์ลบกลุ่มนี้' });
+    }
+
+    await pool.query('DELETE FROM study_groups WHERE id = $1', [groupId]);
+    res.json({ message: 'ลบกลุ่มสำเร็จ' });
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ error: 'เกิดข้อผิดพลาดภายในเซิร์ฟเวอร์' });
+  }
+});
+
 app.delete('/api/groups/:id/leave', authenticateToken, async (req, res) => {
   try {
     await pool.query(

@@ -1,6 +1,7 @@
 import "./GroupDetail.css";
 import Navbar from "../components/Navbar";
 import Footer from "../components/Footer";
+import { getCurrentUser, groupApi } from "../services/api";
 
 import { useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
@@ -20,19 +21,10 @@ export default function GroupDetail() {
         setError("");
 
         try {
-            const token = localStorage.getItem("token");
-            const headers = token ? { Authorization: `Bearer ${token}` } : {};
-            const res = await fetch(`http://localhost:5000/api/groups/${id}`, { headers });
-            const data = await res.json();
-
-            if (!res.ok) {
-                setError(data.error || "โหลดข้อมูลกลุ่มไม่สำเร็จ");
-                setGroup(null);
-            } else {
-                setGroup(data);
-            }
+            const data = await groupApi.getGroupDetail(id);
+            setGroup(data);
         } catch (err) {
-            setError("ไม่สามารถเชื่อมต่อกับเซิร์ฟเวอร์ได้");
+            setError(err.message || "โหลดข้อมูลกลุ่มไม่สำเร็จ");
             setGroup(null);
         } finally {
             setLoading(false);
@@ -70,19 +62,10 @@ export default function GroupDetail() {
         setActionLoading(true);
         setActionError("");
         try {
-            const res = await fetch(`http://localhost:5000/api/groups/${id}/join`, {
-                method: "POST",
-                headers: { Authorization: `Bearer ${token}` },
-            });
-            const data = await res.json();
-
-            if (!res.ok) {
-                setActionError(data.error || "เข้าร่วมกลุ่มไม่สำเร็จ");
-            } else {
-                await fetchGroupDetail();
-            }
+            await groupApi.joinGroup(id);
+            await fetchGroupDetail();
         } catch (err) {
-            setActionError("ไม่สามารถเชื่อมต่อกับเซิร์ฟเวอร์ได้");
+            setActionError(err.message || "เข้าร่วมกลุ่มไม่สำเร็จ");
         } finally {
             setActionLoading(false);
         }
@@ -98,19 +81,10 @@ export default function GroupDetail() {
         setActionLoading(true);
         setActionError("");
         try {
-            const res = await fetch(`http://localhost:5000/api/groups/${id}/leave`, {
-                method: "DELETE",
-                headers: { Authorization: `Bearer ${token}` },
-            });
-            const data = await res.json();
-
-            if (!res.ok) {
-                setActionError(data.error || "ออกจากกลุ่มไม่สำเร็จ");
-            } else {
-                await fetchGroupDetail();
-            }
+            await groupApi.leaveGroup(id);
+            await fetchGroupDetail();
         } catch (err) {
-            setActionError("ไม่สามารถเชื่อมต่อกับเซิร์ฟเวอร์ได้");
+            setActionError(err.message || "ออกจากกลุ่มไม่สำเร็จ");
         } finally {
             setActionLoading(false);
         }
@@ -128,26 +102,27 @@ export default function GroupDetail() {
         setActionLoading(true);
         setActionError("");
         try {
-            const res = await fetch(`http://localhost:5000/api/groups/${id}`, {
-                method: "DELETE",
-                headers: { Authorization: `Bearer ${token}` },
-            });
-            const data = await res.json();
-
-            if (!res.ok) {
-                setActionError(data.error || "ลบกลุ่มไม่สำเร็จ");
-            } else {
-                navigate("/my-groups");
-            }
+            await groupApi.deleteGroup(id);
+            navigate("/");
         } catch (err) {
-            setActionError("ไม่สามารถเชื่อมต่อกับเซิร์ฟเวอร์ได้");
+            setActionError(err.message || "ลบกลุ่มไม่สำเร็จ");
         } finally {
             setActionLoading(false);
         }
     };
 
-    const isOwner = Boolean(group?.is_owner);
-    const isMember = Boolean(group?.is_member);
+    const currentUser = getCurrentUser();
+
+    const ownerFromFallback =
+        (currentUser.userId && Number(group?.created_by) === Number(currentUser.userId)) ||
+        (currentUser.username && group?.creator_name === currentUser.username);
+
+    const memberFromFallback =
+        (currentUser.userId && (group?.members || []).some((m) => Number(m.id) === Number(currentUser.userId))) ||
+        (currentUser.username && (group?.members || []).some((m) => m.username === currentUser.username));
+
+    const isOwner = Boolean(group?.is_owner || ownerFromFallback);
+    const isMember = Boolean(group?.is_member || memberFromFallback || isOwner);
 
     return (
         <div className="group-detail-page">
