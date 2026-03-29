@@ -1,7 +1,7 @@
 import "./GroupDetail.css";
 import Navbar from "../components/Navbar";
 import Footer from "../components/Footer";
-import { getCurrentUser, groupApi } from "../services/api";
+import { getCurrentUser, groupApi, isGroupOwner } from "../services/api";
 
 import { useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
@@ -113,15 +113,11 @@ export default function GroupDetail() {
 
     const currentUser = getCurrentUser();
 
-    const ownerFromFallback =
-        (currentUser.userId && Number(group?.created_by) === Number(currentUser.userId)) ||
-        (currentUser.username && group?.creator_name === currentUser.username);
-
     const memberFromFallback =
         (currentUser.userId && (group?.members || []).some((m) => Number(m.id) === Number(currentUser.userId))) ||
         (currentUser.username && (group?.members || []).some((m) => m.username === currentUser.username));
 
-    const isOwner = Boolean(group?.is_owner || ownerFromFallback);
+    const isOwner = isGroupOwner(group, currentUser);
     const isMember = Boolean(group?.is_member || memberFromFallback || isOwner);
 
     return (
