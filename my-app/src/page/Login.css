@@ -7,7 +7,7 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  background-image: url('https://media.discordapp.net/attachments/1483763938741977129/1484144561914646538/header20B9E081B8E088B8E0A7B8E0B1B8E080B8E0B2-2160x1080.jpg?ex=69c07495&is=69bf2315&hm=78a13e4031ede75fd7a2e7848ec99b4479077e2a3e273f27382affb917a9f6c5&=&format=webp&width=1712&height=856');
+  background-image: url('../assets/Login.jpg');
   position: relative;
 }
 
@@ -94,4 +94,17 @@ html, body, #root {
 .btn-primary:disabled {
   opacity: 0.65;
   cursor: not-allowed;
+}
+
+.field-error {
+  display: block;
+  color: #e53e3e;
+  font-size: 0.8rem;
+  margin-top: 4px;
+}
+
+.form-message.error {
+  color: #e53e3e;
+  font-size: 0.9rem;
+  text-align: center;
 }
