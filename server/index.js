@@ -167,6 +167,31 @@ app.get('/api/groups', async (req, res) => {
   }
 });
 
+app.get('/api/groups/me', authenticateToken, async (req, res) => {
+  try {
+    const result = await pool.query(`
+      SELECT
+        sg.*,
+        u.username AS creator_name,
+        COUNT(gm_all.user_id)::INT AS current_members,
+        TRUE AS is_member,
+        (sg.created_by = $1) AS is_owner
+      FROM group_members gm_me
+      JOIN study_groups sg ON sg.id = gm_me.group_id
+      LEFT JOIN users u ON sg.created_by = u.id
+      LEFT JOIN group_members gm_all ON gm_all.group_id = sg.id
+      WHERE gm_me.user_id = $1
+      GROUP BY sg.id, u.username
+      ORDER BY sg.created_at DESC
+    `, [req.user.id]);
+
+    res.json(result.rows);
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ error: 'เกิดข้อผิดพลาดภายในเซิร์ฟเวอร์' });
+  }
+});
+
 app.get('/api/groups/:id', async (req, res) => {
   try {
     const groupResult = await pool.query(`

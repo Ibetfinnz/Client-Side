@@ -2,7 +2,7 @@ import "./MyGroup.css";
 import Navbar from "../components/Navbar";
 import Footer from "../components/Footer";
 import GroupCard from "../components/GroupCard";
-import { getCurrentUser, groupApi, isGroupOwner } from "../services/api";
+import { getCurrentUser, groupApi } from "../services/api";
 import { useCallback, useEffect, useMemo, useState } from "react";
 
 export default function MyGroup() {
@@ -17,18 +17,15 @@ export default function MyGroup() {
         setError("");
 
         try {
-            const data = await groupApi.getGroups();
-
-            const myGroups = data.filter((group) => isGroupOwner(group, currentUser));
-
-            setGroups(myGroups);
+            const data = await groupApi.getMyGroups();
+            setGroups(data);
         } catch (err) {
             setError(err.message || "โหลดข้อมูลไม่สำเร็จ");
             setGroups([]);
         } finally {
             setLoading(false);
         }
-    }, [currentUser.userId, currentUser.username]);
+    }, []);
 
     useEffect(() => {
         if (!currentUser.token) {
@@ -51,7 +48,7 @@ export default function MyGroup() {
                 {!loading && error && <p>{error}</p>}
 
                 {!loading && !error && groups.length === 0 && (
-                    <p>คุณยังไม่ได้สร้างกลุ่ม</p>
+                    <p>คุณยังไม่ได้เข้าร่วมกลุ่ม</p>
                 )}
 
                 {!loading && !error && groups.length > 0 && (
@@ -59,7 +56,7 @@ export default function MyGroup() {
                         {groups.map((group) => (
                             <GroupCard
                                 key={group.id}
-                                group={{ ...group, is_owner: true }}
+                                group={group}
                                 onDeleted={fetchMyGroups}
                             />
                         ))}

@@ -93,6 +93,7 @@ export const authApi = {
 
 export const groupApi = {
   getGroups: () => request("/groups"),
+  getMyGroups: () => request("/groups/me", { withAuth: true }),
   getGroupDetail: (groupId) => request(`/groups/${groupId}`, { authOptional: true }),
   createGroup: (payload) => request("/groups", { method: "POST", withAuth: true, body: payload }),
   joinGroup: (groupId) => request(`/groups/${groupId}/join`, { method: "POST", withAuth: true }),
