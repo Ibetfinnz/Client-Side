@@ -2,6 +2,7 @@ import "./Navbar.css";
 import { Link } from "react-router-dom";
 import { useState, useEffect, useRef } from "react";
 import { useNavigate } from "react-router-dom";
+import { clearAuthSession, getCurrentUser } from "../services/api";
 
 export default function Navbar() {
   const [user, setUser] = useState(null);
@@ -10,8 +11,7 @@ export default function Navbar() {
   const navigate = useNavigate();
 
   useEffect(() => {
-    const token = localStorage.getItem("token");
-    const username = localStorage.getItem("username");
+    const { token, username } = getCurrentUser();
     if (token && username) {
       setUser({ username });
     }
@@ -28,8 +28,7 @@ export default function Navbar() {
   }, []);
 
   const handleLogout = () => {
-    localStorage.removeItem("token");
-    localStorage.removeItem("username");
+    clearAuthSession();
     setUser(null);
     setDropdownOpen(false);
     navigate("/");

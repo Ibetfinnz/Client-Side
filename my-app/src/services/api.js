@@ -10,6 +10,29 @@ class ApiError extends Error {
 }
 
 const getToken = () => localStorage.getItem("token");
+const getUsername = () => localStorage.getItem("username") || "";
+
+const getCurrentUser = () => {
+  const username = getUsername();
+  const token = getToken();
+  let userId = null;
+
+  if (token) {
+    try {
+      const payload = JSON.parse(atob(token.split(".")[1] || ""));
+      userId = payload?.id ?? null;
+    } catch (err) {
+      userId = null;
+    }
+  }
+
+  return { username, userId, token };
+};
+
+const clearAuthSession = () => {
+  localStorage.removeItem("token");
+  localStorage.removeItem("username");
+};
 
 async function request(path, options = {}) {
   const {
@@ -67,4 +90,4 @@ export const groupApi = {
   deleteGroup: (groupId) => request(`/groups/${groupId}`, { method: "DELETE", withAuth: true }),
 };
 
-export { ApiError, getToken };
+export { ApiError, getToken, getCurrentUser, clearAuthSession };
