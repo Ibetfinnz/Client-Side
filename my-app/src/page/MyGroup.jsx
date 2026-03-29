@@ -2,7 +2,7 @@ import "./MyGroup.css";
 import Navbar from "../components/Navbar";
 import Footer from "../components/Footer";
 import GroupCard from "../components/GroupCard";
-import { getCurrentUser, groupApi } from "../services/api";
+import { getCurrentUser, groupApi, isGroupOwner } from "../services/api";
 import { useCallback, useEffect, useMemo, useState } from "react";
 
 export default function MyGroup() {
@@ -19,11 +19,7 @@ export default function MyGroup() {
         try {
             const data = await groupApi.getGroups();
 
-            const myGroups = data.filter((group) => {
-                const byUserId = currentUser.userId && Number(group.created_by) === Number(currentUser.userId);
-                const byUsername = currentUser.username && group.creator_name === currentUser.username;
-                return Boolean(byUserId || byUsername);
-            });
+            const myGroups = data.filter((group) => isGroupOwner(group, currentUser));
 
             setGroups(myGroups);
         } catch (err) {

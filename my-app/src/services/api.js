@@ -34,6 +34,16 @@ const clearAuthSession = () => {
   localStorage.removeItem("username");
 };
 
+const isGroupOwner = (group, user = getCurrentUser()) => {
+  if (!group || !user) return false;
+
+  const byFlag = Boolean(group.is_owner);
+  const byUserId = user.userId && Number(group.created_by) === Number(user.userId);
+  const byUsername = user.username && group.creator_name === user.username;
+
+  return Boolean(byFlag || byUserId || byUsername);
+};
+
 async function request(path, options = {}) {
   const {
     method = "GET",
@@ -90,4 +100,4 @@ export const groupApi = {
   deleteGroup: (groupId) => request(`/groups/${groupId}`, { method: "DELETE", withAuth: true }),
 };
 
-export { ApiError, getToken, getCurrentUser, clearAuthSession };
+export { ApiError, getToken, getCurrentUser, clearAuthSession, isGroupOwner };
