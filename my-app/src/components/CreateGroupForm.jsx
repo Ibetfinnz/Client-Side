@@ -1,6 +1,7 @@
 import "./CreateGroupForm.css";
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
+import { groupApi } from "../services/api";
 
 export default function CreateGroupForm() {
   const navigate = useNavigate();
@@ -53,40 +54,27 @@ export default function CreateGroupForm() {
     setLoading(true);
 
     try {
-      const res = await fetch("http://localhost:5000/api/groups", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${token}`,
-        },
-        body: JSON.stringify({
-          ...formData,
-          max_members: parseInt(formData.max_members, 10),
-          image_url: formData.image_url || null,
-        }),
+      await groupApi.createGroup({
+        ...formData,
+        max_members: parseInt(formData.max_members, 10),
+        image_url: formData.image_url || null,
       });
 
-      const data = await res.json();
-
-      if (!res.ok) {
-        setError(data.error || "เกิดข้อผิดพลาด กรุณาลองใหม่อีกครั้ง");
-      } else {
-        setSuccess("สร้างกลุ่มสำเร็จเรียบร้อยแล้ว 🎉");
-        setTimeout(() => navigate("/group-list"), 1000);
-        setFormData({
-          image_url: "",
-          title: "",
-          subject: "",
-          location: "",
-          study_date: today,
-          start_time: "",
-          end_time: "",
-          max_members: "",
-          description: "",
-        });
-      }
+      setSuccess("สร้างกลุ่มสำเร็จเรียบร้อยแล้ว 🎉");
+      setTimeout(() => navigate("/group-list"), 1000);
+      setFormData({
+        image_url: "",
+        title: "",
+        subject: "",
+        location: "",
+        study_date: today,
+        start_time: "",
+        end_time: "",
+        max_members: "",
+        description: "",
+      });
     } catch (err) {
-      setError("ไม่สามารถเชื่อมต่อกับเซิร์ฟเวอร์ได้ กรุณาลองใหม่อีกครั้ง");
+      setError(err.message || "ไม่สามารถเชื่อมต่อกับเซิร์ฟเวอร์ได้ กรุณาลองใหม่อีกครั้ง");
     } finally {
       setLoading(false);
     }

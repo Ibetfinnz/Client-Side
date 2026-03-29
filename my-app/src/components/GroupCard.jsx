@@ -1,6 +1,7 @@
 import "./GroupCard.css";
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
+import { groupApi } from "../services/api";
 
 export default function GroupCard({ group, onJoined, onDeleted }) {
   const navigate = useNavigate();
@@ -49,18 +50,10 @@ export default function GroupCard({ group, onJoined, onDeleted }) {
     setLoading(true);
     setError("");
     try {
-      const res = await fetch(`http://localhost:5000/api/groups/${id}/join`, {
-        method: "POST",
-        headers: { Authorization: `Bearer ${token}` },
-      });
-      const data = await res.json();
-      if (!res.ok) {
-        setError(data.error || "เกิดข้อผิดพลาด");
-      } else {
-        if (onJoined) onJoined();
-      }
+      await groupApi.joinGroup(id);
+      if (onJoined) onJoined();
     } catch (err) {
-      setError("ไม่สามารถเชื่อมต่อกับเซิร์ฟเวอร์ได้");
+      setError(err.message || "เกิดข้อผิดพลาด");
     } finally {
       setLoading(false);
     }
@@ -69,14 +62,15 @@ export default function GroupCard({ group, onJoined, onDeleted }) {
   const handleDelete = async () => {
     if (!window.confirm("ยืนยันการลบกลุ่มนี้?")) return;
     const token = localStorage.getItem("token");
+    if (!token) {
+      setError("กรุณาเข้าสู่ระบบก่อน");
+      return;
+    }
     try {
-      const res = await fetch(`http://localhost:5000/api/groups/${id}`, {
-        method: "DELETE",
-        headers: { Authorization: `Bearer ${token}` },
-      });
-      if (res.ok && onDeleted) onDeleted();
+      await groupApi.deleteGroup(id);
+      if (onDeleted) onDeleted();
     } catch (err) {
-      alert("ไม่สามารถลบกลุ่มได้");
+      setError(err.message || "ไม่สามารถลบกลุ่มได้");
     }
   };
 

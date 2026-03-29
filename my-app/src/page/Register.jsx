@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import './Register.css';
 import Header_Login from '../components/Header_Login';
+import { authApi } from '../services/api';
 
 function Register() {
   const [form, setForm] = useState({ firstName: '', lastName: '', email: '', password: '' });
@@ -16,24 +17,15 @@ function Register() {
     setLoading(true);
     setMessage('');
     try {
-      const res = await fetch('http://localhost:5000/api/register', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          username: `${form.firstName} ${form.lastName}`,
-          email: form.email,
-          password: form.password,
-        }),
+      await authApi.register({
+        username: `${form.firstName} ${form.lastName}`,
+        email: form.email,
+        password: form.password,
       });
-      const data = await res.json();
-      if (res.ok) {
-        setMessage('✅ สมัครสมาชิกสำเร็จ! กรุณาเข้าสู่ระบบ');
-        setForm({ firstName: '', lastName: '', email: '', password: '' });
-      } else {
-        setMessage(`❌ ${data.error}`);
-      }
-    } catch {
-      setMessage('❌ ไม่สามารถเชื่อมต่อ Server ได้');
+      setMessage('✅ สมัครสมาชิกสำเร็จ! กรุณาเข้าสู่ระบบ');
+      setForm({ firstName: '', lastName: '', email: '', password: '' });
+    } catch (err) {
+      setMessage(`❌ ${err.message || 'ไม่สามารถเชื่อมต่อ Server ได้'}`);
     } finally {
       setLoading(false);
     }

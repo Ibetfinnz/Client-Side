@@ -4,6 +4,7 @@ import { Link } from 'react-router-dom';
 import Header from '../components/Header';
 import GroupCard from "../components/GroupCard";
 import { useEffect, useState } from "react";
+import { groupApi } from "../services/api";
 
 function Home() {
   const [upcomingGroups, setUpcomingGroups] = useState([]);
@@ -11,9 +12,7 @@ function Home() {
   useEffect(() => {
     const fetchGroups = async () => {
       try {
-        const res = await fetch("http://localhost:5000/api/groups");
-        if (!res.ok) return;
-        const data = await res.json();
+        const data = await groupApi.getGroups();
 
         const today = new Date();
         today.setHours(0, 0, 0, 0);
@@ -24,7 +23,7 @@ function Home() {
 
         setUpcomingGroups(upcoming);
       } catch (err) {
-        console.error(err);
+        console.error(err.message || err);
       }
     };
 

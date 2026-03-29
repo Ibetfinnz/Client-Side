@@ -3,6 +3,7 @@ import Navbar from "../components/Navbar";
 import Footer from "../components/Footer";
 import FilterGroup from "../components/FilterGroup";
 import GroupCard from "../components/GroupCard";
+import { groupApi } from "../services/api";
 
 import { useEffect, useState } from "react";
 
@@ -14,12 +15,10 @@ export default function GroupList() {
   useEffect(() => {
     const fetchGroups = async () => {
       try {
-        const res = await fetch("http://localhost:5000/api/groups");
-        if (!res.ok) throw new Error("โหลดข้อมูลไม่สำเร็จ");
-        const data = await res.json();
+        const data = await groupApi.getGroups();
         setGroups(data);
       } catch (err) {
-        setError(err.message);
+        setError(err.message || "โหลดข้อมูลไม่สำเร็จ");
       }
     };
 

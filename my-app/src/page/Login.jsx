@@ -2,6 +2,7 @@ import { useState } from 'react';
 import { useNavigate } from 'react-router-dom'; 
 import './Login.css';
 import Header_Login from '../components/Header_Login';
+import { authApi } from '../services/api';
 
 function Login() {
   const [form, setForm] = useState({ email: '', password: '' });
@@ -18,20 +19,12 @@ function Login() {
     setLoading(true);
     setMessage('');
     try {
-      const res = await fetch('http://localhost:5000/api/login', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(form),
-      });
-      const data = await res.json();
-      if (res.ok) {
-        localStorage.setItem('token', data.token);
-        localStorage.setItem('username', data.username);
-        navigate('/');
-        setMessage(`❌ ${data.error}`);
-      }
-    } catch {
-      setMessage('❌ ไม่สามารถเชื่อมต่อ Server ได้');
+      const data = await authApi.login(form);
+      localStorage.setItem('token', data.token);
+      localStorage.setItem('username', data.username);
+      navigate('/');
+    } catch (err) {
+      setMessage(`❌ ${err.message || 'ไม่สามารถเชื่อมต่อ Server ได้'}`);
     } finally {
       setLoading(false);
     }
