@@ -163,6 +163,14 @@
   cursor: not-allowed;
 }
 
+.group-detail-full-btn {
+  background: #9ca3af !important;
+}
+
+.group-detail-full-btn:hover {
+  background: #9ca3af !important;
+}
+
 .group-detail-status {
   color: var(--text-mid);
   font-size: 14px;

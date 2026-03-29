@@ -196,8 +196,12 @@ export default function GroupDetail() {
                     </div>
 
                     {!isMember && !isOwner && (
-                        <button className="group-detail-join-btn" onClick={handleJoin} disabled={actionLoading}>
-                            {actionLoading ? "กำลังดำเนินการ..." : "เข้าร่วมกลุ่มนี้"}
+                        <button 
+                            className={`group-detail-join-btn ${group.current_members >= group.max_members ? 'group-detail-full-btn' : ''}`}
+                            onClick={handleJoin} 
+                            disabled={actionLoading || group.current_members >= group.max_members}
+                        >
+                            {actionLoading ? "กำลังดำเนินการ..." : (group.current_members >= group.max_members ? "เต็มแล้ว" : "เข้าร่วมกลุ่มนี้")}
                         </button>
                     )}
 
