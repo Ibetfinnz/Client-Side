@@ -1,7 +1,7 @@
 import "./GroupCard.css";
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { groupApi } from "../services/api";
+import { getCurrentUser, groupApi, isGroupOwner } from "../services/api";
 
 export default function GroupCard({ group, onJoined, onDeleted }) {
   const navigate = useNavigate();
@@ -24,6 +24,9 @@ export default function GroupCard({ group, onJoined, onDeleted }) {
     is_owner,
     is_member,
   } = group;
+
+  const currentUser = getCurrentUser();
+  const isOwner = isGroupOwner(group, currentUser);
 
   const firstLetter = creator_name ? creator_name.charAt(0).toUpperCase() : "?";
 
@@ -99,7 +102,7 @@ export default function GroupCard({ group, onJoined, onDeleted }) {
         {error && <p className="card-error">{error}</p>}
 
         <div className="card-actions">
-          {is_owner && (
+          {Boolean(onDeleted) && isOwner && (
             <button className="btn-delete" onClick={handleDelete}>
               ลบกลุ่มนี้
             </button>
@@ -110,7 +113,7 @@ export default function GroupCard({ group, onJoined, onDeleted }) {
           >
             ดูรายละเอียด
           </button>
-          {!is_owner && !is_member && (
+          {!isOwner && !is_member && (
             <button
               className="btn-join"
               disabled={isFull || loading}
