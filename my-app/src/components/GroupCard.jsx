@@ -117,13 +117,13 @@ export default function GroupCard({ group, onJoined, onDeleted }) {
           >
             ดูรายละเอียด
           </button>
-          {!isOwner && !is_member && (
+          {!is_member && (
             <button
               className="btn-join"
-              disabled={isFull || loading}
+              disabled={isFull || loading || isOwner}
               onClick={handleJoin}
             >
-              {loading ? "กำลังเข้าร่วม..." : isFull ? "กลุ่มเต็มแล้ว" : "เข้าร่วมกลุ่ม"}
+              {isOwner ? "เจ้าของกลุ่ม" : loading ? "กำลังเข้าร่วม..." : isFull ? "กลุ่มเต็มแล้ว" : "เข้าร่วมกลุ่ม"}
             </button>
           )}
         </div>
