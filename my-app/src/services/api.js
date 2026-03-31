@@ -80,6 +80,10 @@ async function request(path, options = {}) {
   if (!response.ok) {
     const fallbackMessage = "เกิดข้อผิดพลาดจากเซิร์ฟเวอร์";
     const message = data?.error || fallbackMessage;
+    if (response.status === 401 || response.status === 403) {
+      clearAuthSession();
+      window.location.href = "/login";
+    }
     throw new ApiError(message, response.status, data);
   }
 
@@ -92,7 +96,7 @@ export const authApi = {
 };
 
 export const groupApi = {
-  getGroups: () => request("/groups"),
+  getGroups: () => request("/groups", { authOptional: true }),
   getMyGroups: () => request("/groups/me", { withAuth: true }),
   getGroupDetail: (groupId) => request(`/groups/${groupId}`, { authOptional: true }),
   createGroup: (payload) => request("/groups", { method: "POST", withAuth: true, body: payload }),

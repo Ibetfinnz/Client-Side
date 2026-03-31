@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import './Register.css';
 import Header_Login from '../components/Header_Login';
 import { authApi } from '../services/api';
@@ -8,6 +9,7 @@ function Register() {
   const [errors, setErrors] = useState({ firstName: '', lastName: '', email: '', password: '' });
   const [message, setMessage] = useState('');
   const [loading, setLoading] = useState(false);
+  const navigate = useNavigate();
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -75,6 +77,7 @@ function Register() {
       setMessage('✅ สมัครสมาชิกสำเร็จ! กรุณาเข้าสู่ระบบ');
       setForm({ firstName: '', lastName: '', email: '', password: '' });
       setErrors({ firstName: '', lastName: '', email: '', password: '' });
+      setTimeout(() => navigate("/login"), 1000);
     } catch (err) {
       setMessage(err.message || 'ไม่สามารถเชื่อมต่อ Server ได้');
     } finally {

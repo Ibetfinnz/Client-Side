@@ -49,11 +49,12 @@ export default function GroupDetail() {
             year: "numeric",
         });
     };
-
     const formatTime = (timeStr) => (timeStr ? timeStr.slice(0, 5) : "-");
 
+    const currentUser = getCurrentUser();
     const handleJoin = async () => {
-        const token = localStorage.getItem("token");
+        if (!window.confirm("ยืนยันที่จะเข้าร่วมกลุ่มนี้หรือไม่")) return;
+        const token = currentUser.token;
         if (!token) {
             setActionError("กรุณาเข้าสู่ระบบก่อน");
             return;
@@ -72,7 +73,8 @@ export default function GroupDetail() {
     };
 
     const handleLeave = async () => {
-        const token = localStorage.getItem("token");
+        if (!window.confirm("ยืนยันที่จะออกจากกลุ่มนี้หรือไม่")) return;
+        const token = currentUser.token;
         if (!token) {
             setActionError("กรุณาเข้าสู่ระบบก่อน");
             return;
@@ -83,6 +85,7 @@ export default function GroupDetail() {
         try {
             await groupApi.leaveGroup(id);
             await fetchGroupDetail();
+            navigate("/group-list");
         } catch (err) {
             setActionError(err.message || "ออกจากกลุ่มไม่สำเร็จ");
         } finally {
@@ -91,19 +94,18 @@ export default function GroupDetail() {
     };
 
     const handleDelete = async () => {
-        const token = localStorage.getItem("token");
+        if (!window.confirm("ยืนยันที่จะลบกลุ่มนี้หรือไม่")) return;
+        const token = currentUser.token;
         if (!token) {
             setActionError("กรุณาเข้าสู่ระบบก่อน");
             return;
         }
 
-        if (!window.confirm("ยืนยันการลบกลุ่มนี้?")) return;
-
         setActionLoading(true);
         setActionError("");
         try {
             await groupApi.deleteGroup(id);
-            navigate("/my-groups");
+            navigate("/group-list");
         } catch (err) {
             setActionError(err.message || "ลบกลุ่มไม่สำเร็จ");
         } finally {
@@ -111,14 +113,13 @@ export default function GroupDetail() {
         }
     };
 
-    const currentUser = getCurrentUser();
-
     const memberFromFallback =
         (currentUser.userId && (group?.members || []).some((m) => Number(m.id) === Number(currentUser.userId))) ||
         (currentUser.username && (group?.members || []).some((m) => m.username === currentUser.username));
 
     const isOwner = isGroupOwner(group, currentUser);
-    const isMember = Boolean(group?.is_member || memberFromFallback || isOwner);
+    const isMember = Boolean(group?.is_member || memberFromFallback);
+    console.log("Member:", isMember, "Owner:", isOwner)
 
     return (
         <div className="group-detail-page">
@@ -201,7 +202,7 @@ export default function GroupDetail() {
                             onClick={handleJoin} 
                             disabled={actionLoading || group.current_members >= group.max_members}
                         >
-                            {actionLoading ? "กำลังดำเนินการ..." : (group.current_members >= group.max_members ? "เต็มแล้ว" : "เข้าร่วมกลุ่มนี้")}
+                            {actionLoading ? "กำลังดำเนินการ..." : (group.current_members >= group.max_members ? "กลุ่มนี้สมาชิกครบแล้ว" : "เข้าร่วมกลุ่มนี้")}
                         </button>
                     )}
 

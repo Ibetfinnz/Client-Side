@@ -96,3 +96,11 @@
 .btn-submit:active {
   transform: scale(0.98);
 }
+
+.form-alert--error {
+  color: var(--red);
+}
+
+.form-alert--success  {
+  color: var(--green);
+}

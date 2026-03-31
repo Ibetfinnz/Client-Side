@@ -148,18 +148,34 @@ app.post('/api/groups', authenticateToken, async (req, res) => {
 });
 
 app.get('/api/groups', async (req, res) => {
+  let currentUserId = null;
+  const authHeader = req.headers['authorization'];
+  const token = authHeader && authHeader.split(' ')[1];
+  if (token) {
+    try {
+      const decoded = jwt.verify(token, JWT_SECRET);
+      currentUserId = decoded.id;
+    } catch {}
+  }
+
   try {
     const result = await pool.query(`
       SELECT 
         sg.*,
         u.username AS creator_name,
-        COUNT(gm.user_id)::INT AS current_members
+        COUNT(gm.user_id)::INT AS current_members,
+        ($1::INT IS NOT NULL AND sg.created_by = $1) AS is_owner,
+        ($1::INT IS NOT NULL AND EXISTS (
+          SELECT 1 FROM group_members 
+          WHERE group_id = sg.id AND user_id = $1
+        )) AS is_member
       FROM study_groups sg
       LEFT JOIN users u ON sg.created_by = u.id
       LEFT JOIN group_members gm ON sg.id = gm.group_id
       GROUP BY sg.id, u.username
       ORDER BY sg.created_at DESC
-    `);
+    `, [currentUserId]);
+    
     res.json(result.rows);
   } catch (err) {
     console.error(err);

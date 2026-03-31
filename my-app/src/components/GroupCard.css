@@ -1,5 +1,6 @@
 .card {
-  width: 350px;
+  width: 100%;
+  min-width: 350px;
   background: var(--white);
   border: 1px solid var(--border);
   border-radius: var(--radius);
@@ -174,4 +175,9 @@
 
 .btn-delete:hover {
   background: #b91c1c;
+}
+
+.card-error {
+  color: var(--red);
+  padding-bottom: 8px;
 }

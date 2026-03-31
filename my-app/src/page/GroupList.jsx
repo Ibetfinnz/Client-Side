@@ -12,16 +12,16 @@ export default function GroupList() {
   const [error, setError] = useState("");
   const [filters, setFilters] = useState(null);
 
-  useEffect(() => {
-    const fetchGroups = async () => {
-      try {
-        const data = await groupApi.getGroups();
-        setGroups(data);
-      } catch (err) {
-        setError(err.message || "โหลดข้อมูลไม่สำเร็จ");
-      }
-    };
+  const fetchGroups = async () => {
+    try {
+      const data = await groupApi.getGroups();
+      setGroups(data);
+    } catch (err) {
+      setError(err.message || "โหลดข้อมูลไม่สำเร็จ");
+    }
+  };
 
+  useEffect(() => {
     fetchGroups();
   }, []);
 

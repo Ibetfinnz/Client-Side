@@ -60,7 +60,7 @@ export default function CreateGroupForm() {
         image_url: formData.image_url || null,
       });
 
-      setSuccess("สร้างกลุ่มสำเร็จเรียบร้อยแล้ว 🎉");
+      setSuccess("สร้างกลุ่มสำเร็จเรียบร้อยแล้ว");
       setTimeout(() => navigate("/group-list"), 1000);
       setFormData({
         image_url: "",
@@ -83,9 +83,6 @@ export default function CreateGroupForm() {
   return (
     <form method="POST" className="form-card" onSubmit={handleSubmit}>
       <div className="form-grid" id="createGroupForm">
-        {error && <div className="form-alert form-alert--error">{error}</div>}
-        {success && <div className="form-alert form-alert--success">{success}</div>}
-
         <div className="form-field">
           <label className="form-label">รูปภาพ (url)</label>
           <input
@@ -197,6 +194,9 @@ export default function CreateGroupForm() {
             placeholder="รายละเอียดเพิ่มเติม..."
           />
         </div>
+
+        {error && <div className="form-alert form-alert--error">{error}</div>}
+        {success && <div className="form-alert form-alert--success">{success}</div>}
 
         <button className="btn-submit" type="submit" disabled={loading}>
           {loading ? "กำลังบันทึก..." : "ยืนยันการสร้างกลุ่ม"}

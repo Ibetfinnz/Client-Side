@@ -21,12 +21,13 @@ export default function GroupCard({ group, onJoined, onDeleted }) {
     current_members,
     max_members,
     creator_name,
-    is_owner,
-    is_member,
   } = group;
 
   const currentUser = getCurrentUser();
   const isOwner = isGroupOwner(group, currentUser);
+  const isMember = !isOwner && Boolean(group?.is_member);
+
+  console.log(id, "Member:", isMember, "Owner:", isOwner);
 
   const firstLetter = creator_name ? creator_name.charAt(0).toUpperCase() : "?";
 
@@ -45,7 +46,8 @@ export default function GroupCard({ group, onJoined, onDeleted }) {
   const isFull = current_members >= max_members;
 
   const handleJoin = async () => {
-    const token = localStorage.getItem("token");
+    if (!window.confirm("ยืนยันที่จะเข้าร่วมกลุ่มนี้หรือไม่")) return;
+    const token = currentUser.token;
     if (!token) {
       setError("กรุณาเข้าสู่ระบบก่อน");
       return;
@@ -67,8 +69,8 @@ export default function GroupCard({ group, onJoined, onDeleted }) {
   };
 
   const handleDelete = async () => {
-    if (!window.confirm("ยืนยันการลบกลุ่มนี้?")) return;
-    const token = localStorage.getItem("token");
+    if (!window.confirm("ยืนยันที่จะลบกลุ่มนี้หรือไม่")) return;
+    const token = currentUser.token;
     if (!token) {
       setError("กรุณาเข้าสู่ระบบก่อน");
       return;
@@ -88,7 +90,9 @@ export default function GroupCard({ group, onJoined, onDeleted }) {
           <div className="author-avatar">{firstLetter}</div>
           <span className="author-name">{creator_name}</span>
         </div>
-        <span>{current_members}/{max_members} คน</span>
+        <span>
+          {current_members}/{max_members} คน
+        </span>
       </div>
 
       <div className="card-img">
@@ -100,7 +104,9 @@ export default function GroupCard({ group, onJoined, onDeleted }) {
         <p className="card-subject">วิชา: {subject}</p>
         <p className="card-datetime">
           <span className="card-date">วันที่: {formatDate(study_date)}</span>
-          <span className="card-time">เวลา: {formatTime(start_time)} - {formatTime(end_time)}</span>
+          <span className="card-time">
+            เวลา: {formatTime(start_time)} - {formatTime(end_time)}
+          </span>
         </p>
 
         {error && <p className="card-error">{error}</p>}
@@ -117,13 +123,21 @@ export default function GroupCard({ group, onJoined, onDeleted }) {
           >
             ดูรายละเอียด
           </button>
-          {!is_member && (
+          {!(Boolean(onDeleted) && isOwner) && (
             <button
               className="btn-join"
-              disabled={isFull || loading || isOwner}
-              onClick={handleJoin}
+              disabled={isFull || loading || isOwner || isMember}
+              onClick={!isMember && !isOwner ? handleJoin : undefined}
             >
-              {isOwner ? "เจ้าของกลุ่ม" : loading ? "กำลังเข้าร่วม..." : isFull ? "กลุ่มเต็มแล้ว" : "เข้าร่วมกลุ่ม"}
+              {isOwner
+                ? "เจ้าของกลุ่ม"
+                : isMember
+                  ? "เข้าร่วมกลุ่มนี้แล้ว"
+                  : loading
+                    ? "กำลังเข้าร่วม..."
+                    : isFull
+                      ? "สมาชิกครบแล้ว"
+                      : "เข้าร่วมกลุ่ม"}
             </button>
           )}
         </div>
