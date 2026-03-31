@@ -43,6 +43,21 @@ export default function GroupCard({ group, onJoined, onDeleted }) {
 
   const formatTime = (t) => (t ? t.slice(0, 5) : "");
 
+  const now = new Date();
+  let isPast = study_date ? study_date < now : false;
+  if (study_date) {
+    const groupDateTime = new Date(study_date);
+
+    if (end_time) {
+      const [hours, minutes] = end_time.split(":");
+      groupDateTime.setHours(Number(hours), Number(minutes), 0, 0);
+    } else {
+      groupDateTime.setHours(23, 59, 59, 999);
+    }
+
+    isPast = now > groupDateTime;
+  }
+
   const isFull = current_members >= max_members;
 
   const handleJoin = async () => {
@@ -126,11 +141,13 @@ export default function GroupCard({ group, onJoined, onDeleted }) {
           {!(Boolean(onDeleted) && isOwner) && (
             <button
               className="btn-join"
-              disabled={isFull || loading || isOwner || isMember}
-              onClick={!isMember && !isOwner ? handleJoin : undefined}
+              disabled={isFull || loading || isOwner || isMember || isPast}
+              onClick={!isMember && !isOwner && !isPast ? handleJoin : undefined}
             >
-              {isOwner
-                ? "เจ้าของกลุ่ม"
+              {isPast
+                ? "กลุ่มนี้ติวเสร็จสิ้นแล้ว"
+                : isOwner
+                ? "คุณเป็นเจ้าของกลุ่มนี้"
                 : isMember
                   ? "เข้าร่วมกลุ่มนี้แล้ว"
                   : loading

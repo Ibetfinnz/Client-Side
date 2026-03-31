@@ -158,6 +158,7 @@
   background: var(--border);
   color: var(--text-mid);
   cursor: default;
+  border: 1px solid var(--text-soft);
 }
 
 .btn-delete {

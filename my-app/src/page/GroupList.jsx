@@ -29,9 +29,19 @@ export default function GroupList() {
     ...new Set(groups.map((g) => g.subject).filter(Boolean)),
   ].sort();
 
-  const filteredGroups = !filters
-    ? groups
-    : groups.filter((g) => {
+  const today = new Date();
+  today.setHours(0, 0, 0, 0);
+
+  const filteredGroups = groups.filter((g) => {
+        if (g.study_date) {
+          const studyDate = new Date(g.study_date);
+          console.log(studyDate)
+          studyDate.setHours(0, 0, 0, 0);
+          if (studyDate < today) {
+            return false;
+          }
+        }
+        if (!filters) return true;
         if (!filters.allDays && filters.date && filters.dateSelected) {
           if (!g.study_date) return false;
           const d = new Date(g.study_date);

@@ -120,6 +120,14 @@ export default function GroupDetail() {
     const isOwner = isGroupOwner(group, currentUser);
     const isMember = Boolean(group?.is_member || memberFromFallback);
     console.log("Member:", isMember, "Owner:", isOwner)
+    
+    
+    const today = new Date();
+    const groupDate = group?.study_date ? new Date(group?.study_date) : null;
+    if (groupDate) groupDate.setHours(0, 0, 0, 0);
+    const isPast = groupDate ? groupDate < today : false;
+
+    console.log(group?.study_date)
 
     return (
         <div className="group-detail-page">
@@ -196,7 +204,7 @@ export default function GroupDetail() {
                         ))}
                     </div>
 
-                    {!isMember && !isOwner && (
+                    {!isMember && !isOwner && !isPast && (
                         <button 
                             className={`group-detail-join-btn ${group.current_members >= group.max_members ? 'group-detail-full-btn' : ''}`}
                             onClick={handleJoin} 
@@ -206,9 +214,15 @@ export default function GroupDetail() {
                         </button>
                     )}
 
-                    {isMember && !isOwner && (
+                    {isMember && !isOwner && !isPast && (
                         <button className="group-detail-leave-btn" onClick={handleLeave} disabled={actionLoading}>
                             {actionLoading ? "กำลังดำเนินการ..." : "ออกจากกลุ่มนี้"}
+                        </button>
+                    )}
+
+                    {isPast && (
+                        <button className="group-detail-ispast-btn" disabled={true}>
+                            {actionLoading ? "กำลังดำเนินการ..." : "กลุ่มนี้ติวเสร็จสิ้นแล้ว"}
                         </button>
                     )}
 
@@ -217,7 +231,7 @@ export default function GroupDetail() {
                             {actionLoading ? "กำลังดำเนินการ..." : "ลบกลุ่มนี้"}
                         </button>
                     )}
-
+                    
                     {actionError && <p className="group-detail-status group-detail-status-error">{actionError}</p>}
                 </aside>
                     </>
