@@ -82,7 +82,7 @@ export default function FilterGroup({ subjectOptions = [], onFilter }) {
                 type="date"
                 id="filterDate"
                 min={todayStr()}
-                value={date}
+                // value={date}
                 disabled={allDays}
                 onChange={(e) => { setDate(e.target.value); setDateSelected(true); }}
               />
