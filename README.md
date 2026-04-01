@@ -31,7 +31,7 @@
 3. สร้างไฟล์ .env ในโฟลเดอร์ server
 4. รันโปรเจค
     ```bash
-    npm run dev
+    nodemon index.js
     ```
 
 ## .env Example
