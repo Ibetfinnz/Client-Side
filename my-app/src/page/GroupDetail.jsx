@@ -220,7 +220,7 @@ export default function GroupDetail() {
                         </button>
                     )}
 
-                    {isPast && (
+                    {isMember && !isOwner && isPast && (
                         <button className="group-detail-ispast-btn" disabled={true}>
                             {actionLoading ? "กำลังดำเนินการ..." : "กลุ่มนี้ติวเสร็จสิ้นแล้ว"}
                         </button>
