@@ -35,7 +35,6 @@
     ```
 
 ## .env Example
-    ```bash
     DB_USER=postgres
     DB_HOST=localhost
     DB_NAME=activities_reading
@@ -43,4 +42,3 @@
     DB_PORT=5432
     PORT=5000
     JWT_SECRET=replace_with_strong_random_secret
-    ```
